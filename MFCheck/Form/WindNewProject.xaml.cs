@@ -23,5 +23,20 @@ namespace MFCheck.Form
         {
             InitializeComponent();
         }
+
+        private void BtnAddProp_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ButDelProp_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BtnOK_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

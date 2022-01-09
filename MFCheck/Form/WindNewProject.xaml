@@ -6,22 +6,55 @@
         xmlns:local="clr-namespace:MFCheck.Form"
         mc:Ignorable="d"
         Title="项目属性" Height="500" Width="880" WindowStyle="ToolWindow" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
+
+    <Window.Resources>
+        <Style x:Key="defLabel" TargetType="Label">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+
+        <Style x:Key="defTextBox" TargetType="TextBox">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="defGroupBox" TargetType="GroupBox">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Height" Value="70"/>
+            <Setter Property="Width" Value="750"/>
+        </Style>
+
+        <Style x:Key="defButton" TargetType="Button">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Width" Value="60"/>
+            <Setter Property="Height" Value="19"/>
+        </Style>
+
+    </Window.Resources>
+
     <Grid>
-        <Label x:Name="label" Content="项目名称" HorizontalAlignment="Left" Margin="57,15,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="117,16,0,0" VerticalAlignment="Top" Width="120" VerticalContentAlignment="Center"/>
-        <Label x:Name="label1" Content="项目描述" HorizontalAlignment="Left" Margin="283,15,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="textBox1" HorizontalAlignment="Left" Height="23" Margin="345,16,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="462" VerticalContentAlignment="Center"/>
-        <Button x:Name="button" Content="确定" HorizontalAlignment="Center" VerticalAlignment="Top" Width="60" Height="19" Margin="0,430,0,0"/>
+        <Label x:Name="label" Content="项目名称"  Margin="57,15,0,0" Style="{StaticResource defLabel}" />
+        <TextBox x:Name="textBox" Height="23" Width="120" Margin="117,16,0,0" Style="{StaticResource defTextBox}"/>
 
-        <GroupBox x:Name="groupBox" Header="项目属性" HorizontalAlignment="Center" VerticalAlignment="Top" Height="200" Width="750" Margin="0,53,0,0">
+        <Label x:Name="label1" Content="项目描述" Margin="283,15,0,0" Style="{StaticResource defLabel}"/>
+        <TextBox x:Name="textBox1" Height="23" Width="462" Margin="345,16,0,0" Style="{StaticResource defTextBox}"/>
 
+
+        <GroupBox x:Name="groupBox" Style="{StaticResource defGroupBox}" Header="属性列表" Height="200" Margin="62,53,464.6,0" Width="340"/>
+        <GroupBox x:Name="groupBox1" Style="{StaticResource defGroupBox}" Header="编辑属性" Height="200" Margin="465,53,61.6,0" Width="340"/>
+
+        <GroupBox x:Name="groupMod" Header="模型命名" Margin="0,262,0,0" Style="{StaticResource defGroupBox}">
         </GroupBox>
 
-        <GroupBox x:Name="groupMod" Header="模型命名" HorizontalAlignment="Center" VerticalAlignment="Top" Height="70"  Width="750" Margin="0,262,0,0">
+        <GroupBox x:Name="groupFile" Header="文件命名" Margin="0,341,0,0" Style="{StaticResource defGroupBox}">
         </GroupBox>
-        
-        <GroupBox x:Name="groupFile" Header="文件命名" HorizontalAlignment="Center" VerticalAlignment="Top" Height="70" Width="750" Margin="0,341,0,0">
-        </GroupBox>
+
+        <Button x:Name="btnOK" Style="{StaticResource defButton}" Content="确定" Margin="0,430,0,0" Click="BtnOK_Click"/>
+        <Button x:Name="btnAddProp" Style="{StaticResource defButton}" Content="添加" Margin="0,130,0,0" Click="BtnAddProp_Click"/>
+        <Button x:Name="butDelProp" Style="{StaticResource defButton}" Content="删除" Margin="0,180,0,0" Click="ButDelProp_Click"/>
 
     </Grid>
 </Window>

@@ -16,5 +16,8 @@ namespace MFCheck
 
         // 属性描述
         public string Desc { set; get; }
+
+        // 属性值
+        public string Value { set; get; }
     }
 }
