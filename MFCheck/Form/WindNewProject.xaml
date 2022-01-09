@@ -1,0 +1,27 @@
+﻿<Window x:Class="MFCheck.Form.WindNewProject"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MFCheck.Form"
+        mc:Ignorable="d"
+        Title="项目属性" Height="500" Width="880" WindowStyle="ToolWindow" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
+    <Grid>
+        <Label x:Name="label" Content="项目名称" HorizontalAlignment="Left" Margin="57,15,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="117,16,0,0" VerticalAlignment="Top" Width="120" VerticalContentAlignment="Center"/>
+        <Label x:Name="label1" Content="项目描述" HorizontalAlignment="Left" Margin="283,15,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="textBox1" HorizontalAlignment="Left" Height="23" Margin="345,16,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="462" VerticalContentAlignment="Center"/>
+        <Button x:Name="button" Content="确定" HorizontalAlignment="Center" VerticalAlignment="Top" Width="60" Height="19" Margin="0,430,0,0"/>
+
+        <GroupBox x:Name="groupBox" Header="项目属性" HorizontalAlignment="Center" VerticalAlignment="Top" Height="200" Width="750" Margin="0,53,0,0">
+
+        </GroupBox>
+
+        <GroupBox x:Name="groupMod" Header="模型命名" HorizontalAlignment="Center" VerticalAlignment="Top" Height="70"  Width="750" Margin="0,262,0,0">
+        </GroupBox>
+        
+        <GroupBox x:Name="groupFile" Header="文件命名" HorizontalAlignment="Center" VerticalAlignment="Top" Height="70" Width="750" Margin="0,341,0,0">
+        </GroupBox>
+
+    </Grid>
+</Window>
