@@ -24,35 +24,37 @@
         </DataTemplate>
     </Window.Resources>
 
-    <Grid ShowGridLines="True">
+    <Grid >
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition Height="20"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <WrapPanel Grid.Row="0" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" >
+        <StackPanel Grid.Row="0" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Orientation="Horizontal" >
             <Menu>
                 <MenuItem x:Name="new" Header="新建" Click="New_Click" />
                 <MenuItem x:Name="about" Header="关于" Click="About_Click" />
                 <MenuItem x:Name="test" Header="测试" Click="Test_Click"/>
             </Menu>
-        </WrapPanel>
+        </StackPanel>
         <Grid Grid.Row="1" Background="{DynamicResource {x:Static SystemColors.InactiveBorderBrushKey}}" />
-        <Grid ShowGridLines="True" Grid.Row="2">
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="240"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <ListBox Grid.Column="0" Name="ProjList" Width="240"
-                     HorizontalAlignment="Center" VerticalAlignment="Center"
+            <Border Grid.Column="0" BorderThickness="1" BorderBrush="#E5E5E5">
+                <ListBox Name="ProjList" Width="240"
+                     HorizontalAlignment="Center" VerticalAlignment="Top"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     ScrollViewer.VerticalScrollBarVisibility="Visible"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
                      SelectionChanged="ProjList_SelectionChanged"
                      ItemsSource="{Binding ProjectSet}"
-                     ItemTemplate="{StaticResource ProjItemTemplate}" >
-            </ListBox>
+                     ItemTemplate="{StaticResource ProjItemTemplate}" BorderThickness="0" >
+                </ListBox>
+            </Border>
 
             <StackPanel DataContext="{Binding Path=SelectedItem,ElementName=ProjList}" Grid.Column="1">
                 <Label Content="{Binding Name}"></Label>

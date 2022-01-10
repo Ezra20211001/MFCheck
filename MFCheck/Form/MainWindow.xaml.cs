@@ -34,20 +34,20 @@ namespace MFCheck
             ProjectSet.Add(new Project() { Name = "NTZJ2", Description = "逆天战绩" });
             ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
             ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
         }
 
         private void About_Click(object sender, RoutedEventArgs e)
