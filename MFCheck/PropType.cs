@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MFCheck
 {
-    enum PropType
+    public enum PropType
     {
         String = 0,
         Enum = 1,

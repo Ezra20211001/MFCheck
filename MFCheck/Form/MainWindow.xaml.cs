@@ -1,6 +1,7 @@
 ﻿using MFCheck.Form;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,9 +22,32 @@ namespace MFCheck
     /// </summary>
     public partial class MainWindow : Window
     {
+        public ObservableCollection<Project> ProjectSet { get; set; } = new ObservableCollection<Project>();
+
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = this;
+
+            ProjectSet.Add(new Project() { Name = "NTZJ", Description = "逆天战绩" });
+            ProjectSet.Add(new Project() { Name = "NTZJ1", Description = "逆天战绩" });
+            ProjectSet.Add(new Project() { Name = "NTZJ2", Description = "逆天战绩" });
+            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
         }
 
         private void About_Click(object sender, RoutedEventArgs e)
@@ -42,13 +66,18 @@ namespace MFCheck
 
         private void Test_Click(object sender, RoutedEventArgs e)
         {
-            WindProject windProject = new WindProject();
+            //            WindProject windProject = new WindProject();
+            //          windProject.Owner = this;
+            //         windProject.ShowDialog();
 
-            windProject.Owner = this;
-            windProject.ShowDialog();
+            Window1 wind = new Window1();
+            wind.Owner = this;
+            wind.Show();
+        }
 
-//            Uri uri = pageProject.Source;
-//            pageProject.Source = new Uri("/MFCheck;component/Form/PageEmptyProject.xaml", UriKind.Relative);
+        private void ProjList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

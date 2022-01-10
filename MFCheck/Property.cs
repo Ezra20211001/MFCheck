@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MFCheck
 {
-    class Property
+    public class Property
     {
         // 属性名
         public string Name { set; get; }

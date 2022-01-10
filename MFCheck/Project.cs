@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 
 namespace MFCheck
 {
-    class Project
+    public class Project
     {
         // 项目名称
         public string Name { get; set; }
+
+        // 项目描述
+        public string Description { get; set; }
 
         // 获得属性列表
         public int GetCount()
