@@ -5,10 +5,51 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MFCheck.Form"
         mc:Ignorable="d"
-        Title="WindProjectMain" Height="450" Width="800" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+        Title="WindProjectMain" Height="700" Width="1200" WindowStartupLocation="CenterOwner">
+
+    <Window.Resources>
+        <Style x:Key="defStackPanel" TargetType="StackPanel">
+            <Setter Property="Orientation" Value="Horizontal"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+
     <Grid>
-        <Button x:Name="btnOpen" Content="打开" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="34,12,0,0" Click="BtnOpen_Click"/>
-        <TextBox x:Name="txtDirPath" HorizontalAlignment="Left" Height="23" Margin="125,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="553" IsEnabled="False" VerticalContentAlignment="Center"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="120"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" >
+            <Button x:Name="btnOpen" Width="60" Content="打开" Click="BtnOpen_Click"/>
+        </StackPanel>
+
+        <Grid Grid.Column="1" ShowGridLines="True">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0">
+                <DataGrid x:Name="fileGrid" Height="100">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="File"/>
+                        <DataGridTextColumn Header="Status"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1">
+                
+            </StackPanel>
+            
+            <StackPanel x:Name="statePanel" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <ProgressBar x:Name="barAll" Height="10" Width="200" HorizontalAlignment="Center"/>
+                <Label x:Name="lbAll" Height="20" Content="1/200" FontSize="10" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
 
     </Grid>
 </Window>

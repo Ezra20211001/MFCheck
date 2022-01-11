@@ -70,14 +70,25 @@ namespace MFCheck
             //          windProject.Owner = this;
             //         windProject.ShowDialog();
 
-            Window1 wind = new Window1();
-            wind.Owner = this;
-            wind.Show();
+            List<string> list1 = new List<string> { "a", "b", "c"};
+            List<string> list2 = new List<string> { "a", "b", "c" };
+
+            List<string> list3 = list2.Concat(list1).ToList();
+
+            Console.WriteLine("");
         }
 
         private void ProjList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
+        }
+
+        private void BtnSel_Click(object sender, RoutedEventArgs e)
+        {
+            WindProject windProject = new WindProject();
+            windProject.Owner = this;
+            windProject.ProjectName = "NewName";
+            windProject.ShowDialog();
         }
     }
 }

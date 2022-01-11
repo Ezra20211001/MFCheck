@@ -14,6 +14,12 @@ namespace MFCheck
         // 项目描述
         public string Description { get; set; }
 
+        // 模型命名方式
+        public string ModNaming { get; set; } = "AAA_AAA_AAAA_AAA";
+
+        // 相机命名方式
+        public string CamNaming { get; set; } = "AAA_AAA_AAAA_AAA";
+
         // 获得属性列表
         public int GetCount()
         {

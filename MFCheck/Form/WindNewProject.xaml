@@ -5,24 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MFCheck.Form"
         mc:Ignorable="d"
-        Title="项目属性" Height="500" Width="880" WindowStyle="ToolWindow" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
+        Title="项目属性" Height="600" Width="880" WindowStyle="ToolWindow" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
 
     <Window.Resources>
         <Style x:Key="defLabel" TargetType="Label">
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
-
+       
         <Style x:Key="defTextBox" TargetType="TextBox">
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Top"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="23"/>
+        </Style>
+        <Style x:Key="norTextBox" TargetType="TextBox" BasedOn="{StaticResource defTextBox}">
+            <Setter Property="BorderBrush" Value="#FFABADB3"/>
+        </Style>
+        <Style x:Key="errTextBox" TargetType="TextBox" BasedOn="{StaticResource defTextBox}">
+            <Setter Property="BorderBrush" Value="Red"/>
         </Style>
 
         <Style x:Key="defGroupBox" TargetType="GroupBox">
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Top"/>
-            <Setter Property="Height" Value="70"/>
+            <Setter Property="Height" Value="60"/>
             <Setter Property="Width" Value="750"/>
         </Style>
 
@@ -36,23 +41,45 @@
     </Window.Resources>
 
     <Grid>
-        <Label x:Name="label" Content="项目名称"  Margin="57,15,0,0" Style="{StaticResource defLabel}" />
-        <TextBox x:Name="textBox" Height="23" Width="120" Margin="117,16,0,0" Style="{StaticResource defTextBox}"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="220"/>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="70"/>
+        </Grid.RowDefinitions>
 
-        <Label x:Name="label1" Content="项目描述" Margin="283,15,0,0" Style="{StaticResource defLabel}"/>
-        <TextBox x:Name="textBox1" Height="23" Width="462" Margin="345,16,0,0" Style="{StaticResource defTextBox}"/>
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <Label Style="{StaticResource defLabel}" Content="项目名称" Margin="40 0 0 0"/>
+            <TextBox Style="{StaticResource norTextBox}" x:Name="txtProName" Width="120"/>
 
+            <Label Style="{StaticResource defLabel}" Content="项目描述" Margin="80 0 0 0"/>
+            <TextBox Style="{StaticResource defTextBox}" x:Name="txtProDesc" Width="462" />
+        </StackPanel>
 
-        <GroupBox x:Name="groupBox" Style="{StaticResource defGroupBox}" Header="属性列表" Height="200" Margin="62,53,464.6,0" Width="340"/>
-        <GroupBox x:Name="groupBox1" Style="{StaticResource defGroupBox}" Header="编辑属性" Height="200" Margin="465,53,61.6,0" Width="340"/>
+        <StackPanel Grid.Row="1">
+            <GroupBox Style="{StaticResource defGroupBox}" Header="属性列表" Height="200" Width="750">
+                <DataGrid HorizontalAlignment="Left" Width="737">
+                </DataGrid>
+            </GroupBox>
+        </StackPanel>
 
-        <GroupBox x:Name="groupMod" Header="模型命名" Margin="0,262,0,0" Style="{StaticResource defGroupBox}">
-        </GroupBox>
+        <StackPanel Grid.Row="2">
+            <GroupBox Style="{StaticResource defGroupBox}" x:Name="groupFile" Header="文件命名" />
+        </StackPanel>
+        
+        <StackPanel Grid.Row="3">
+            <GroupBox Style="{StaticResource defGroupBox}" x:Name="groupMod" Header="模型命名" />
+        </StackPanel>
 
-        <GroupBox x:Name="groupFile" Header="文件命名" Margin="0,341,0,0" Style="{StaticResource defGroupBox}">
-        </GroupBox>
-
-        <Button x:Name="btnOK" Style="{StaticResource defButton}" Content="确定" Margin="0,430,0,0" Click="BtnOK_Click"/>
+        <StackPanel Grid.Row="4">
+            <GroupBox Style="{StaticResource defGroupBox}" x:Name="groupCam" Header="相机命名" />
+        </StackPanel>
+        
+        <StackPanel Grid.Row="5">
+            <Button Style="{StaticResource defButton}" x:Name="btnOK" Content="确定" Click="BtnOK_Click"/>
+        </StackPanel>
         <Button x:Name="btnAddProp" Style="{StaticResource defButton}" Content="添加" Margin="0,130,0,0" Click="BtnAddProp_Click"/>
         <Button x:Name="butDelProp" Style="{StaticResource defButton}" Content="删除" Margin="0,180,0,0" Click="ButDelProp_Click"/>
 

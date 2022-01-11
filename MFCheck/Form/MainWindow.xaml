@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MFCheck"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="1200" WindowStartupLocation="CenterScreen">
+        Title="MainWindow" Height="700" Width="1200" WindowStartupLocation="CenterScreen" MinWidth="20">
     <Window.Resources>
         <DataTemplate x:Key="ProjItemTemplate">
             <Grid Height="50" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -22,6 +22,30 @@
                 <!--<Button Name="delProject" Content="X" FontSize="10" Grid.Row="0" Grid.Column="1" Width="15" Height="15"/>-->
             </Grid>
         </DataTemplate>
+
+        <Style x:Key="defLabel" TargetType="Label">
+            <Setter Property="Width" Value="80"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="defTextBox" TargetType="TextBox">
+            <Setter Property="MinWidth" Value="300"/>
+            <Setter Property="Height" Value="23"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="IsEnabled" Value="False"/>
+        </Style>
+
+        <Style x:Key="defButton" TargetType="Button">
+            <Setter Property="Width" Value="80"/>
+            <Setter Property="Height" Value="30" />
+        </Style>
+
+        <Style x:Key="defStackPanel" TargetType="StackPanel">
+            <Setter Property="Orientation" Value="Horizontal"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
     </Window.Resources>
 
     <Grid >
@@ -56,10 +80,53 @@
                 </ListBox>
             </Border>
 
-            <StackPanel DataContext="{Binding Path=SelectedItem,ElementName=ProjList}" Grid.Column="1">
-                <Label Content="{Binding Name}"></Label>
-                <Label Content="{Binding Description}"></Label>
-            </StackPanel>
+            <Grid Grid.Column="1" DataContext="{Binding Path=SelectedItem, ElementName=ProjList}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Style="{StaticResource defStackPanel}">
+                    <Label Style="{StaticResource defLabel}" Content="项目名称"/>
+                    <TextBox Style="{StaticResource defTextBox}" x:Name="txtProName" Text="{Binding Name}" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Style="{StaticResource defStackPanel}">
+                    <Label Style="{StaticResource defLabel}" Content="项目描述"/>
+                    <TextBox Style="{StaticResource defTextBox}" x:Name="txtProDesc" Text="{Binding Name}" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Style="{StaticResource defStackPanel}">
+                    <Label Style="{StaticResource defLabel}" Content="文件命名"/>
+                    <TextBox Style="{StaticResource defTextBox}" x:Name="txtFileNaming" Text="{Binding Name}" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="3" Style="{StaticResource defStackPanel}">
+                    <Label Style="{StaticResource defLabel}" Content="模型命名"/>
+                    <TextBox Style="{StaticResource defTextBox}" x:Name="txtModNaming" Text="{Binding Name}" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="4" Style="{StaticResource defStackPanel}">
+                    <Label Style="{StaticResource defLabel}" Content="相机命名"/>
+                    <TextBox Style="{StaticResource defTextBox}" x:Name="txtCamNaming" Text="{Binding Name}" />
+                </StackPanel>
+
+                <!--<StackPanel Grid.Row="5" Style="{StaticResource defStackPanel}">
+                    <Label Style="{StaticResource defLabel}" Content="工作目录"/>
+                    <TextBox Style="{StaticResource defTextBox}" x:Name="txtFilePath" />
+                </StackPanel>-->
+                
+                <StackPanel Grid.Row="6" Style="{StaticResource defStackPanel}">
+                    <Button Style="{StaticResource defButton}" x:Name="btnSel" Content="选择" Margin="0,0,10,0" Click="BtnSel_Click"/>
+                    <Button Style="{StaticResource defButton}" x:Name="btnEdit" Content="编辑" Margin="0,0,10,0"/>
+                    <Button Style="{StaticResource defButton}" x:Name="btnDel" Content="删除" />
+                </StackPanel>
+            </Grid>
         </Grid>
     </Grid>
 </Window>

@@ -36,6 +36,20 @@ namespace MFCheck.Form
 
         private void BtnOK_Click(object sender, RoutedEventArgs e)
         {
+            string propName = txtProName.Text;
+            if (string.IsNullOrEmpty(propName))
+            {
+                txtProName.SetValue(StyleProperty, FindResource("errTextBox"));
+            }
+            else
+            {
+                txtProName.SetValue(StyleProperty, FindResource("norTextBox"));
+            }
+
+            string propDesc = txtProDesc.Text;
+            
+
+
 
         }
     }
