@@ -70,6 +70,7 @@
     <Compile Include="Form\WindProject.xaml.cs">
       <DependentUpon>WindProject.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MayaDocument.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Property.cs" />
     <Compile Include="PropType.cs" />

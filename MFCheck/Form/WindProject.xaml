@@ -13,6 +13,13 @@
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
+
+        <Style x:Key="funcButton" TargetType="Button">
+            <Setter Property="Margin" Value="0 5 0 0"/>
+            <Setter Property="Width" Value="80"/>
+            <Setter Property="Height" Value="40" />
+        </Style>
+        
     </Window.Resources>
 
     <Grid>
@@ -21,9 +28,13 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Column="0" >
-            <Button x:Name="btnOpen" Width="60" Content="打开" Click="BtnOpen_Click"/>
-        </StackPanel>
+        <Border Grid.Column="0" BorderThickness="1" BorderBrush="#E5E5E5">
+            <StackPanel>
+                <Button x:Name="btnOpen" Content="打开" Click="BtnOpen_Click" Style="{StaticResource funcButton}"/>
+                <Button x:Name="btnCheck" Content="命名检查"  Click="BtnCheck_Click" Style="{StaticResource funcButton}"/>
+
+            </StackPanel>
+        </Border>
 
         <Grid Grid.Column="1" ShowGridLines="True">
             <Grid.RowDefinitions>
@@ -33,16 +44,17 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0">
-                <DataGrid x:Name="fileGrid" Height="100">
+                <DataGrid x:Name="fileGrid" AutoGenerateColumns="False" CanUserAddRows="False">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="File"/>
-                        <DataGridTextColumn Header="Status"/>
+                        <DataGridTextColumn Binding="{Binding Path}" Header="文件路径" Width="4*"/>
+                        <DataGridTextColumn Binding="{Binding Name}" Header="文件名" Width="3*"/>
+                        <DataGridTextColumn Header="Status" Width="10*"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>
 
             <StackPanel Grid.Row="1">
-                
+                <TextBlock x:Name="txtNotice" TextWrapping="Wrap"/>
             </StackPanel>
             
             <StackPanel x:Name="statePanel" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
