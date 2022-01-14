@@ -16,7 +16,18 @@ namespace MFCheck
     {
         protected override void OnStartup(StartupEventArgs e) 
         {
+            base.OnStartup(e);
 
+            //加载配置
         }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
+
+            //导出配置
+        }
+
+        public ProjectSet Manager { get; private set; } = new ProjectSet();
     }
 }

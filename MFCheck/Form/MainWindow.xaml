@@ -59,7 +59,6 @@
             <Menu>
                 <MenuItem x:Name="new" Header="新建" Click="New_Click" />
                 <MenuItem x:Name="about" Header="关于" Click="About_Click" />
-                <MenuItem x:Name="test" Header="测试" Click="Test_Click"/>
             </Menu>
         </StackPanel>
         <Grid Grid.Row="1" Background="{DynamicResource {x:Static SystemColors.InactiveBorderBrushKey}}" />
@@ -75,7 +74,6 @@
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                      SelectionChanged="ProjList_SelectionChanged"
-                     ItemsSource="{Binding ProjectSet}"
                      ItemTemplate="{StaticResource ProjItemTemplate}" BorderThickness="0" >
                 </ListBox>
             </Border>
@@ -98,22 +96,22 @@
 
                 <StackPanel Grid.Row="1" Style="{StaticResource defStackPanel}">
                     <Label Style="{StaticResource defLabel}" Content="项目描述"/>
-                    <TextBox Style="{StaticResource defTextBox}" x:Name="txtProDesc" Text="{Binding Name}" />
+                    <TextBox Style="{StaticResource defTextBox}" x:Name="txtProDesc" Text="{Binding Description}" />
                 </StackPanel>
 
                 <StackPanel Grid.Row="2" Style="{StaticResource defStackPanel}">
                     <Label Style="{StaticResource defLabel}" Content="文件命名"/>
-                    <TextBox Style="{StaticResource defTextBox}" x:Name="txtFileNaming" Text="{Binding Name}" />
+                    <TextBox Style="{StaticResource defTextBox}" x:Name="txtFileNaming" Text="{Binding FileNaming}" />
                 </StackPanel>
 
                 <StackPanel Grid.Row="3" Style="{StaticResource defStackPanel}">
                     <Label Style="{StaticResource defLabel}" Content="模型命名"/>
-                    <TextBox Style="{StaticResource defTextBox}" x:Name="txtModNaming" Text="{Binding Name}" />
+                    <TextBox Style="{StaticResource defTextBox}" x:Name="txtModNaming" Text="{Binding ModNaming}" />
                 </StackPanel>
 
                 <StackPanel Grid.Row="4" Style="{StaticResource defStackPanel}">
                     <Label Style="{StaticResource defLabel}" Content="相机命名"/>
-                    <TextBox Style="{StaticResource defTextBox}" x:Name="txtCamNaming" Text="{Binding Name}" />
+                    <TextBox Style="{StaticResource defTextBox}" x:Name="txtCamNaming" Text="{Binding CamNaming}" />
                 </StackPanel>
 
                 <!--<StackPanel Grid.Row="5" Style="{StaticResource defStackPanel}">
@@ -123,8 +121,8 @@
                 
                 <StackPanel Grid.Row="6" Style="{StaticResource defStackPanel}">
                     <Button Style="{StaticResource defButton}" x:Name="btnSel" Content="选择" Margin="0,0,10,0" Click="BtnSel_Click"/>
-                    <Button Style="{StaticResource defButton}" x:Name="btnEdit" Content="编辑" Margin="0,0,10,0"/>
-                    <Button Style="{StaticResource defButton}" x:Name="btnDel" Content="删除" />
+                    <Button Style="{StaticResource defButton}" x:Name="btnEdit" Content="编辑" Margin="0,0,10,0" Click="BtnEdit_Click"/>
+                    <Button Style="{StaticResource defButton}" x:Name="btnDel" Content="删除" Click="BtnDel_Click" />
                 </StackPanel>
             </Grid>
         </Grid>

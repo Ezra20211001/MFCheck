@@ -8,6 +8,17 @@ namespace MFCheck
 {
     public class Project
     {
+        public Project()
+        {
+            //创建默认属性
+            Property property = AddProperty("Project");
+            property.Name = "Project";
+            property.Type = PropType.Const;
+            property.ReadOnley = true;
+            property.Value = "";
+            property.Desc = "项目名称，项目创建后自动绑定项目名称";
+        }
+
         // 项目名称
         public string Name { get; set; }
 
@@ -20,15 +31,19 @@ namespace MFCheck
         // 相机命名方式
         public string CamNaming { get; set; } = "AAA_AAA_AAAA_AAA";
 
-        // 获得属性列表
-        public int GetCount()
-        {
-            return m_Properties.Count;
-        }
+        // 文件命名
+        public string FileNaming { get; set; } = "";
+
+        public List<Property> PropertySet { get => m_Properties.Values.ToList(); }
 
         public Property GetProperty(string name)
         {
-            return m_Properties[name];
+            if (m_Properties.ContainsKey(name))
+            {
+                return m_Properties[name];
+            }
+
+            return null;
         }
 
         public bool FindProperty(string name)
@@ -43,9 +58,12 @@ namespace MFCheck
 
         public Property AddProperty(string name)
         {
-            Property property = new Property();
-            property.Name = name;
+            if (m_Properties.ContainsKey(name))
+            {
+                return null;
+            }
 
+            Property property = new Property();
             m_Properties.Add(name, property);
 
             return property;

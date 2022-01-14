@@ -22,32 +22,18 @@ namespace MFCheck
     /// </summary>
     public partial class MainWindow : Window
     {
-        public ObservableCollection<Project> ProjectSet { get; set; } = new ObservableCollection<Project>();
-
         public MainWindow()
         {
             InitializeComponent();
             DataContext = this;
 
-            ProjectSet.Add(new Project() { Name = "NTZJ", Description = "逆天战绩" });
-            ProjectSet.Add(new Project() { Name = "NTZJ1", Description = "逆天战绩" });
-            ProjectSet.Add(new Project() { Name = "NTZJ2", Description = "逆天战绩" });
-            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
-            //ProjectSet.Add(new Project() { Name = "NTZJ3", Description = "逆天战绩" });
+            RefreshList();
+        }
+
+        private void RefreshList()
+        {
+            App app = (Application.Current as App);
+            ProjList.ItemsSource = app.Manager.GetProjectList();
         }
 
         private void About_Click(object sender, RoutedEventArgs e)
@@ -62,20 +48,8 @@ namespace MFCheck
             WindNewProject windNewProject = new WindNewProject();
             windNewProject.Owner = this;
             windNewProject.ShowDialog();
-        }
 
-        private void Test_Click(object sender, RoutedEventArgs e)
-        {
-            //            WindProject windProject = new WindProject();
-            //          windProject.Owner = this;
-            //         windProject.ShowDialog();
-
-            List<string> list1 = new List<string> { "a", "b", "c"};
-            List<string> list2 = new List<string> { "a", "b", "c" };
-
-            List<string> list3 = list2.Concat(list1).ToList();
-
-            Console.WriteLine("");
+            RefreshList();
         }
 
         private void ProjList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -85,10 +59,45 @@ namespace MFCheck
 
         private void BtnSel_Click(object sender, RoutedEventArgs e)
         {
-            WindProject windProject = new WindProject();
+            if (ProjList.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("先选择一个项目", "Error");
+                return;
+            }
+
+            Project project = ProjList.SelectedItems[0] as Project;
+
+            WindProject windProject = new WindProject(project.Name);
             windProject.Owner = this;
-            windProject.ProjectName = "NewName";
             windProject.ShowDialog();
+        }
+
+        private void BtnEdit_Click(object sender, RoutedEventArgs e)
+        {
+            if (ProjList.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("先选择一个项目", "Error");
+                return;
+            }
+
+            //Project project = ProjList.SelectedItems[0] as Project;
+            //WindNewProject windNewProject = new WindNewProject();
+            //windNewProject.Owner = this;
+            //windNewProject.ShowDialog();
+        }
+
+        private void BtnDel_Click(object sender, RoutedEventArgs e)
+        {
+            if (ProjList.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("先选择一个项目", "Error");
+                return;
+            }
+
+            Project project = ProjList.SelectedItems[0] as Project;
+            (Application.Current as App).Manager.RemoveProject(project.Name);
+
+            RefreshList();
         }
     }
 }

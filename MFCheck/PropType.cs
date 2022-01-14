@@ -8,8 +8,8 @@ namespace MFCheck
 {
     public enum PropType
     {
-        String = 0,     //字符串
-        Enum = 1,       //枚举
+        Variable = 0,   //变量
         Const = 2,      //常量
+        Enum = 1,       //枚举
     }
 }

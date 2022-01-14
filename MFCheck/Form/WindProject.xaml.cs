@@ -1,17 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Windows.Forms;
 using System.IO;
 using System.Threading;
 using System.ComponentModel;
@@ -23,23 +13,21 @@ namespace MFCheck.Form
     /// </summary>
     public partial class WindProject : Window
     {
-        public WindProject()
+        public WindProject(string projName)
         {
             InitializeComponent();
+
             statePanel.Visibility = Visibility.Hidden;
-        }
+            Title = projName;
 
-        public string ProjectName { set; get; }
+            ProjName = projName;
 
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            base.OnSourceInitialized(e);
-
-
-            Title = ProjectName;
             m_Thread = new Thread(FileThread);
             m_Thread.Start();
         }
+
+        public string ProjName { get; private set; }
+
 
         protected override void OnClosing(CancelEventArgs e)
         {
@@ -50,7 +38,7 @@ namespace MFCheck.Form
 
         private void BtnOpen_Click(object sender, RoutedEventArgs e)
         {
-            FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
+            System.Windows.Forms.FolderBrowserDialog folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
             
             if (folderBrowser.ShowDialog() != System.Windows.Forms.DialogResult.OK)
             {
@@ -58,7 +46,7 @@ namespace MFCheck.Form
             }
 
             m_strSelectPath = folderBrowser.SelectedPath;
-            Title = ProjectName + " " + m_strSelectPath;
+            Title = ProjName + " " + m_strSelectPath;
 
             m_MayaList.Clear();
             m_MayaList = GetFileFullPath(m_strSelectPath, "*.ma");
@@ -76,7 +64,7 @@ namespace MFCheck.Form
 
             if (m_MayaList.Count == 0)
             {
-                System.Windows.MessageBox.Show("选择文件", "Error");
+                MessageBox.Show("选择文件", "Error");
                 return;
             }
 
@@ -163,16 +151,28 @@ namespace MFCheck.Form
             }
         }
 
+        //检查文件命名
         private bool CheckFileName(string fileName)
         {
+            App app = Application.Current as App;
+            Project project = app.Manager.GetProject(ProjName);
+            if (null == project)
+            {
+                return false;
+            }
+
+
             return true;
         }
+
 
         private List<MayaInfo> m_MayaList = new List<MayaInfo>();
         private Thread m_Thread;
         private AutoResetEvent m_Event = new AutoResetEvent(false);
         private string m_strSelectPath;
     }
+
+
 
     class MayaInfo
     {

@@ -19,5 +19,8 @@ namespace MFCheck
 
         // 属性值
         public string Value { set; get; }
+
+        // 只读属性
+        public bool ReadOnley { get; set; }
     }
 }
