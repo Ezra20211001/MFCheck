@@ -38,15 +38,19 @@ namespace MFCheck
 
         private void About_Click(object sender, RoutedEventArgs e)
         {
-            About fmAbout = new About();
-            fmAbout.Owner = this;
+            About fmAbout = new About
+            {
+                Owner = this
+            };
             fmAbout.ShowDialog();
         }
 
         private void New_Click(object sender, RoutedEventArgs e)
         {
-            WindNewProject windNewProject = new WindNewProject(new Project());
-            windNewProject.Owner = this;
+            WindNewProject windNewProject = new WindNewProject(new Project())
+            {
+                Owner = this
+            };
             windNewProject.ShowDialog();
 
             RefreshList();
@@ -67,8 +71,10 @@ namespace MFCheck
 
             Project project = ProjList.SelectedItems[0] as Project;
 
-            WindProject windProject = new WindProject(project);
-            windProject.Owner = this;
+            WindProject windProject = new WindProject(project)
+            {
+                Owner = this
+            };
             windProject.ShowDialog();
         }
 
@@ -81,8 +87,10 @@ namespace MFCheck
             }
 
             Project project = ProjList.SelectedItems[0] as Project;
-            WindNewProject windNewProject = new WindNewProject(project);
-            windNewProject.Owner = this;
+            WindNewProject windNewProject = new WindNewProject(project)
+            {
+                Owner = this
+            };
             windNewProject.ShowDialog();
         }
 

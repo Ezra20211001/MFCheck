@@ -17,10 +17,10 @@ namespace MFCheck.Form
         public WindProject(Project project)
         {
             InitializeComponent();
-            m_CurProject = project;
+            CurProject = project;
 
             statePanel.Visibility = Visibility.Hidden;
-            Title = m_CurProject.Name;
+            Title = CurProject.Name;
 
             m_Thread = new Thread(FileThread);
             m_Thread.Start();
@@ -44,7 +44,7 @@ namespace MFCheck.Form
             }
 
             m_strSelectPath = folderBrowser.SelectedPath;
-            Title = m_CurProject.Name + " " + m_strSelectPath;
+            Title = CurProject.Name + " " + m_strSelectPath;
 
             m_MayaList = new ObservableCollection<MayaInfo>(GetFileFullPath(m_strSelectPath, "*.ma"));
             fileGrid.ItemsSource = m_MayaList;
@@ -117,8 +117,7 @@ namespace MFCheck.Form
                     file.Status = "... ...";
 
                     //检查文件名规范
-                    string fileName = Path.GetFileNameWithoutExtension(file.FullName);
-                    if (!CheckFileNaming(fileName))
+                    if (!CurProject.TestingFileName(Path.GetFileNameWithoutExtension(file.FullName)))
                     {
                         InvokeFileError(file, "文件命名错误");
                         continue;
@@ -171,124 +170,38 @@ namespace MFCheck.Form
             }
         }
 
-        //检查文件命名
-        private bool CheckFileNaming(string fileName)
-        {
-            string[] nameSplit = fileName.Split('_');
-            string[] config = m_CurProject.FileNaming.Split('_');
-            if (nameSplit.Count() != config.Count())
-            {
-                return false;
-            }
-            
-            for (int i = 0; i < config.Count(); ++i)
-            {
-                Property property = m_CurProject.GetProperty(config[i]);
-                if (null == property)
-                {
-                    MessageBox.Show("配置错误", "Error");
-                }
-
-                if (!property.Testing(nameSplit[i]))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         //检查模型命名
         private bool CheckModNaming(MayaElement rootEle)
         {
-            if (string.IsNullOrEmpty(m_CurProject.FileNaming))
-            {
-                return true;
-            }
-
             if (rootEle.Type != MayaType.MTransform)
             {
                 return true;
             }
 
-            string modName;
-            string[] modNameList = rootEle.NodeName.Split(':');
-            if (modNameList.Count() > 0)
-            {
-                modName = modNameList[modNameList.Count() - 1];
-            }
-            else
-            {
-                modName = rootEle.NodeName;
-            }
-
-            string[] nameSplit = modName.Split('_');
-            string[] config = m_CurProject.FileNaming.Split('_');
-
-            // 属性数量不一致
-            if (nameSplit.Count() != config.Count())
+            string modName = rootEle.NodeName.Split(':').Last();
+            if(!CurProject.IsModName(modName))
             {
                 return true;
             }
 
-            for (int i = 0; i < config.Count(); ++i)
-            {
-                Property property = m_CurProject.GetProperty(config[i]);
-                if (null == property)
-                {
-                    MessageBox.Show("配置错误", "Error");
-                }
-
-                if (!property.Testing(nameSplit[i]))
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return CurProject.TestingModName(modName);
         }
 
         //检查相机命令
         private bool CheckCamNaming(MayaElement rootEle)
         {
-            if (rootEle.Type != MayaType.MRefernce)
+            if (rootEle.Type != MayaType.MCamera)
             {
                 return true;
             }
 
-            string modName;
-            string[] modNameList = rootEle.NodeName.Split(':');
-            if (modNameList.Count() > 0)
-            {
-                modName = modNameList[modNameList.Count() - 1];
-            }
-            else
-            {
-                modName = rootEle.NodeName;
-            }
-
-            string[] nameSplit = modName.Split('_');
-            string[] config = m_CurProject.FileNaming.Split('_');
-            if (nameSplit.Count() != config.Count())
+            string camName = rootEle.NodeName.Split(':').Last();
+            if(!CurProject.IsCameraName(camName))
             {
                 return true;
             }
 
-            for (int i = 0; i < config.Count(); ++i)
-            {
-                Property property = m_CurProject.GetProperty(config[i]);
-                if (null == property)
-                {
-                    MessageBox.Show("配置错误", "Error");
-                }
-
-                if (!property.Testing(nameSplit[i]))
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return CurProject.TestingCamName(camName);
         }
 
         //文件夹从错误
@@ -306,7 +219,7 @@ namespace MFCheck.Form
         private Thread m_Thread;
         private AutoResetEvent m_Event = new AutoResetEvent(false);
         private string m_strSelectPath;
-        private Project m_CurProject;
+        private Project CurProject { set; get; }
     }
 
 

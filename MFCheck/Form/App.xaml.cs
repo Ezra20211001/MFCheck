@@ -15,7 +15,7 @@ namespace MFCheck
     /// </summary>
     public partial class App : Application
     {
-        protected override void OnStartup(StartupEventArgs e) 
+        protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
@@ -36,13 +36,8 @@ namespace MFCheck
                     {
                         Name = proj.Attribute("Name").Value,
                         Description = proj.Attribute("Description").Value,
-                        FileNaming = proj.Attribute("FileNaming").Value,
-                        ModNaming = proj.Attribute("ModNaming").Value,
-                        CamNaming = proj.Attribute("CamNaming").Value,
-                    };
 
-                    project.MainProperty.Value = project.Name;
-                    project.MainProperty.Desc = project.Description;
+                    };
 
                     foreach (var prop in proj.Descendants("Property"))
                     {
@@ -59,6 +54,10 @@ namespace MFCheck
                         property.ReadOnly = bool.Parse(prop.Attribute("ReadOnly").Value);
                     }
 
+                    // 一定要这样写，属性有依赖关系
+                    project.FileNaming = proj.Attribute("FileNaming").Value;
+                    project.ModNaming = proj.Attribute("ModNaming").Value;
+                    project.CamNaming = proj.Attribute("CamNaming").Value;
                     Manager.AddProject(project);
                 }
             }
@@ -79,12 +78,12 @@ namespace MFCheck
             //导出配置
             XDocument xmlDocument = new XDocument();
             xmlDocument.Declaration = new XDeclaration("1.0", "utf-8", "yes");
-            
+
             XElement root = new XElement("ProjectSet");
             xmlDocument.Add(root);
 
             List<Project> ProjectList = Manager.GetProjectList();
-            foreach(var project  in ProjectList)
+            foreach (var project in ProjectList)
             {
                 XElement projEle = new XElement("Project");
                 root.Add(projEle);

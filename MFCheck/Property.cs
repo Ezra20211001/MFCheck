@@ -9,16 +9,34 @@ namespace MFCheck
     public class Property
     {
         // 属性名
-        public string Name { set; get; }
+        public string Name { get; set; }
 
         // 属性类型
-        public PropType Type { set; get; }
+        public PropType Type { get; set; }
 
         // 属性描述
-        public string Desc { set; get; }
+        public string Desc { get; set; }
 
         // 属性值
-        public string Value { set; get; }
+        public string Value
+        {
+            get { return m_StrValue; }
+            set
+            {
+                m_StrValue = value;
+                if (string.IsNullOrEmpty(m_StrValue))
+                {
+                    m_Contents = null;
+                }
+                else
+                {
+                    m_Contents = m_StrValue.Split(SPILT_CHA);
+                }
+            }
+        }
+
+        // 获取值列表
+        //public string[] Values { get => m_Contents; }
 
         // 只读属性
         public bool ReadOnly { get; set; }
@@ -46,8 +64,7 @@ namespace MFCheck
 
         private bool TestingEnum(string value)
         {
-            string[] enumList = Value.Split(',');
-            foreach(var e in enumList)
+            foreach(var e in m_Contents)
             {
                 if (e == value)
                 {
@@ -62,5 +79,9 @@ namespace MFCheck
         {
             return true;
         }
+
+        private const char SPILT_CHA = ',';
+        private string m_StrValue;
+        private string[] m_Contents;
     }
 }
