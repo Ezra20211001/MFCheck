@@ -21,8 +21,6 @@ namespace MFCheck
         // 编辑版本
         public string Product { get; private set; }
 
-
-
         public List<string> RootElements
         {
             get => m_RootElement.Keys.ToList();
@@ -143,14 +141,11 @@ namespace MFCheck
             //父节点为空，则判定为Root节点
             if (string.IsNullOrEmpty(node.ParentName))
             {
-                List<string> children = new List<string>();
-                children.Add(node.NodeName);
-
-                m_RootElement.Add(node.ParentName, children);
+                m_RootElement.Add(node.NodeName, node.NodeName);
             }
             else
             {
-                if (!m_NodeElement.ContainsKey(node.ParentName))
+                if (m_NodeElement.ContainsKey(node.ParentName))
                 {
                     m_NodeElement[node.ParentName].Add(node.NodeName);
                 }
@@ -174,9 +169,16 @@ namespace MFCheck
 
         private Dictionary<string, MayaElement> m_NameIndices = new Dictionary<string, MayaElement>();
         private Dictionary<string, List<string>> m_NodeElement = new Dictionary<string, List<string>>();
-        private Dictionary<string, List<string>> m_RootElement = new Dictionary<string, List<string>>();
+        private Dictionary<string, string> m_RootElement = new Dictionary<string, string>();
     }
 
+    class MayaType
+    {
+        public static readonly string MRefernce = "reference";
+        public static readonly string MScript = "script";
+        public static readonly string MTransform = "transform";
+        public static readonly string MCamera = "camera";
+    }
 
     class MayaElement
     {

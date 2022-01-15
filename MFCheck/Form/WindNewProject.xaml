@@ -67,10 +67,10 @@
 
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <Label Style="{StaticResource defLabel}" Content="项目名称" Margin="40 0 0 0"/>
-            <TextBox Style="{StaticResource norTextBox}" x:Name="txtProjName" Width="120"/>
+            <TextBox Style="{StaticResource norTextBox}" x:Name="txtProjName" Width="120" Text="{Binding Path=Name}"/>
 
             <Label Style="{StaticResource defLabel}" Content="项目描述" Margin="80 0 0 0"/>
-            <TextBox Style="{StaticResource defTextBox}" x:Name="txtProDesc" Width="462" />
+            <TextBox Style="{StaticResource defTextBox}" x:Name="txtProDesc" Width="462" Text="{Binding Description}"/>
         </StackPanel>
 
         <StackPanel Grid.Row="1">
@@ -87,7 +87,7 @@
                             <DataGridTextColumn Header="属性名" Binding="{Binding Name}" />
                             <DataGridTextColumn Header="属性类型" Binding="{Binding Type}" />
                             <DataGridTextColumn Binding="{Binding Value}" Header="属性值" />
-                            <DataGridTextColumn Binding="{Binding ReadOnley}" Header="只读属性" />
+                            <DataGridTextColumn Binding="{Binding ReadOnly}" Header="只读属性" />
                             <DataGridTextColumn Binding="{Binding Desc}" Header="属性描述"/>
                         </DataGrid.Columns>
                     </DataGrid>
@@ -110,17 +110,17 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Label Grid.Row="0" Grid.Column="0" Content="属性名" VerticalAlignment="Center"/>
-                        <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtPropName" VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtPropName" VerticalAlignment="Center" ToolTip="通常设置成英文字母"/>
 
                         <Label Grid.Row="1" Grid.Column="0" Content="属性类型" VerticalAlignment="Center"/>
                         <ComboBox Grid.Row="1" Grid.Column="1" x:Name="combPropType" VerticalAlignment="Center"
                                   SelectedItem="{Binding Path=EType}"/>
                         
                         <Label Grid.Row="2" Grid.Column="0" Content="属性值" VerticalAlignment="Center"/>
-                        <TextBox Grid.Row="2" Grid.Column="1" x:Name="txtValue" VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" x:Name="txtValue" VerticalAlignment="Center" ToolTip="多个变量用&quot;,&quot;分开"/>
                         
                         <Label Grid.Row="3" Grid.Column="0" Content="属性描述" VerticalAlignment="Center"/>
-                        <TextBox Grid.Row="3" Grid.Column="1" x:Name="txtDesc" VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" x:Name="txtDesc" VerticalAlignment="Center" ToolTip="用于描述该属性的作用"/>
                     </Grid>
                 </GroupBox>
             </Grid>
@@ -128,19 +128,19 @@
 
         <StackPanel Grid.Row="2">
             <GroupBox Style="{StaticResource defGroupBox}" x:Name="groupFile" Header="文件命名">
-                <TextBox x:Name="txtFileNaming" VerticalAlignment="Center" FontSize="16"/>
+                <TextBox x:Name="txtFileNaming" Text="{Binding FileNaming}" VerticalAlignment="Center" FontSize="16" ToolTip="格式: 属性1_属性2_...属性N"/>
             </GroupBox>
         </StackPanel>
         
         <StackPanel Grid.Row="3">
             <GroupBox Style="{StaticResource defGroupBox}" x:Name="groupMod" Header="模型命名">
-                <TextBox x:Name="txtModNaming" VerticalAlignment="Center" FontSize="16"/>
+                <TextBox x:Name="txtModNaming" Text="{Binding ModNaming}" VerticalAlignment="Center" FontSize="16" ToolTip="格式: 属性1_属性2_...属性N"/>
             </GroupBox>
         </StackPanel>
 
         <StackPanel Grid.Row="4">
             <GroupBox Style="{StaticResource defGroupBox}" x:Name="groupCam" Header="相机命名">
-                <TextBox x:Name="txtCamNaming" VerticalAlignment="Center" FontSize="16"/>
+                <TextBox x:Name="txtCamNaming" Text="{Binding CamNaming}" VerticalAlignment="Center" FontSize="16" ToolTip="格式: 属性1_属性2_...属性N"/>
             </GroupBox>
         </StackPanel>
 

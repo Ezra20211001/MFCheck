@@ -44,11 +44,11 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0">
-                <DataGrid x:Name="fileGrid" AutoGenerateColumns="False" CanUserAddRows="False">
+                <DataGrid x:Name="fileGrid" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding Path}" Header="文件路径" Width="4*"/>
-                        <DataGridTextColumn Binding="{Binding Name}" Header="文件名" Width="3*"/>
-                        <DataGridTextColumn Header="Status" Width="10*"/>
+                        <DataGridTextColumn Binding="{Binding Path}" Header="文件路径"/>
+                        <DataGridTextColumn Binding="{Binding Name}" Header="文件名"/>
+                        <DataGridTextColumn Binding="{Binding Status}" Header="Status"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>

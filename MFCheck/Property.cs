@@ -21,6 +21,46 @@ namespace MFCheck
         public string Value { set; get; }
 
         // 只读属性
-        public bool ReadOnley { get; set; }
+        public bool ReadOnly { get; set; }
+
+        // 验证
+        public bool Testing(string value)
+        {
+            switch (Type)
+            {
+                case PropType.Const:
+                    return TestingConst(value);
+                case PropType.Enum:
+                    return TestingEnum(value);
+                case PropType.Variable:
+                    return TestingVariable(value);
+                default:
+                    return false;
+            }
+        }
+
+        private bool TestingConst(string value)
+        {
+            return Value == value;
+        }
+
+        private bool TestingEnum(string value)
+        {
+            string[] enumList = Value.Split(',');
+            foreach(var e in enumList)
+            {
+                if (e == value)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool TestingVariable(string value)
+        {
+            return true;
+        }
     }
 }
