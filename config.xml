@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<ProjectSet>
+  <Project Name="NTZJ" Description="逆天战记" FileNaming="Project_Season_EP_SC_ANI" ModNaming="Project_Season_Category_Name_Rig" CamNaming="">
+    <Property Name="Season" Type="Const" Desc="季编号" Value="S01" ReadOnly="False" />
+    <Property Name="SC" Type="Variable" Desc="卡数编号" Value="" ReadOnly="False" />
+    <Property Name="EP" Type="Enum" Desc="集数编号" Value="EP001,EP002" ReadOnly="False" />
+    <Property Name="ANI" Type="Const" Desc="名称后缀" Value="ANI" ReadOnly="False" />
+    <Property Name="Category" Type="Enum" Desc="模型类型：C-角色，P-道具，S-场景" Value="C,P,S" ReadOnly="False" />
+    <Property Name="Name" Type="Variable" Desc="模型名称" Value="" ReadOnly="False" />
+    <Property Name="Rig" Type="Const" Desc="文件后缀" Value="Rig" ReadOnly="False" />
+  </Project>
+</ProjectSet>
