@@ -26,14 +26,7 @@ namespace MFCheck
         {
             InitializeComponent();
             DataContext = this;
-
-            RefreshList();
-        }
-
-        private void RefreshList()
-        {
-            App app = (Application.Current as App);
-            ProjList.ItemsSource = app.Manager.GetProjectList();
+            ProjList.ItemsSource = (Application.Current as App).ProjectList.ToList();
         }
 
         private void About_Click(object sender, RoutedEventArgs e)
@@ -52,8 +45,7 @@ namespace MFCheck
                 Owner = this
             };
             windNewProject.ShowDialog();
-
-            RefreshList();
+            ProjList.ItemsSource = (Application.Current as App).ProjectList.ToList();
         }
 
         private void ProjList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -103,9 +95,8 @@ namespace MFCheck
             }
 
             Project project = ProjList.SelectedItems[0] as Project;
-            (Application.Current as App).Manager.RemoveProject(project.Name);
-
-            RefreshList();
+            (Application.Current as App).RemoveProject(project.Name);
+            ProjList.ItemsSource = (Application.Current as App).ProjectList.ToList();
         }
     }
 }

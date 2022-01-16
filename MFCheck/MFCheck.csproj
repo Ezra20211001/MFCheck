@@ -72,7 +72,6 @@
     </Compile>
     <Compile Include="MayaDocument.cs" />
     <Compile Include="Project.cs" />
-    <Compile Include="ProjectSet.cs" />
     <Compile Include="Property.cs" />
     <Compile Include="PropType.cs" />
     <Compile Include="Form\About.xaml.cs">

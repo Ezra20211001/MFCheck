@@ -255,7 +255,7 @@ namespace MFCheck.Form
             // 创建模式
             if (string.IsNullOrEmpty(CurProject.Name))
             {
-                Project project = (Application.Current as App).Manager.GetProject(propName);
+                Project project = (Application.Current as App).GetProject(propName);
                 if (null != project)
                 {
                     txtProjName.SetValue(StyleProperty, FindResource("errTextBox"));
@@ -270,8 +270,7 @@ namespace MFCheck.Form
             CurProject.ModNaming = modNaming;
             CurProject.CamNaming = camNaming;
 
-            App app = (Application.Current as App);
-            app.Manager.AddProject(CurProject);
+            (Application.Current as App).AddProject(CurProject);
 
             Close();
         }

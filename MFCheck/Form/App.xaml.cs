@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
+using static System.Collections.Generic.Dictionary<string, MFCheck.Project>;
 
 namespace MFCheck
 {
@@ -27,7 +23,7 @@ namespace MFCheck
                 XDocument xmlDocument = XDocument.Load(fullPath);
                 foreach (var proj in xmlDocument.Descendants("Project"))
                 {
-                    if (null != Manager.GetProject(proj.Attribute("Name").Value))
+                    if (null != GetProject(proj.Attribute("Name").Value))
                     {
                         continue;
                     }
@@ -58,7 +54,7 @@ namespace MFCheck
                     project.FileNaming = proj.Attribute("FileNaming").Value;
                     project.ModNaming = proj.Attribute("ModNaming").Value;
                     project.CamNaming = proj.Attribute("CamNaming").Value;
-                    Manager.AddProject(project);
+                    AddProject(project);
                 }
             }
             catch (Exception ex)
@@ -82,7 +78,6 @@ namespace MFCheck
             XElement root = new XElement("ProjectSet");
             xmlDocument.Add(root);
 
-            List<Project> ProjectList = Manager.GetProjectList();
             foreach (var project in ProjectList)
             {
                 XElement projEle = new XElement("Project");
@@ -115,8 +110,38 @@ namespace MFCheck
             xmlDocument.Save(fullPath);
         }
 
-        public ProjectSet Manager { get; private set; } = new ProjectSet();
-        public string ConfigName { get; private set; } = "config.xml";
-        public string ConfigPath { get; private set; } = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+        public Project GetProject(string name)
+        {
+            if (Container.ContainsKey(name))
+            {
+                return Container[name];
+            }
+            return null;
+        }
+
+        public bool AddProject(Project project)
+        {
+            if (Container.ContainsKey(project.Name))
+            {
+                return false;
+            }
+
+            Container.Add(project.Name, project);
+            return true;
+        }
+
+        public void RemoveProject(string name)
+        {
+            if (Container.ContainsKey(name))
+            {
+                Container.Remove(name);
+            }
+        }
+
+        public ValueCollection ProjectList => Container.Values;
+
+        private string ConfigName { get; } = "config.xml";
+        private string ConfigPath { get; } = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+        private Dictionary<string, Project> Container { get; } = new Dictionary<string, Project>();
     }
 }
