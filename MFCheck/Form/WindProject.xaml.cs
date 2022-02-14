@@ -6,6 +6,10 @@ using System.IO;
 using System.Threading;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Windows.Controls;
+using System.Data;
+using System.Windows.Documents;
+using System.Windows.Media;
 
 namespace MFCheck.Form
 {
@@ -22,10 +26,9 @@ namespace MFCheck.Form
             statePanel.Visibility = Visibility.Hidden;
             Title = CurProject.Name;
 
-            m_Thread = new Thread(FileThread);
+            m_Thread = new Thread(ReadThread);
             m_Thread.Start();
         }
-
 
         protected override void OnClosing(CancelEventArgs e)
         {
@@ -50,7 +53,6 @@ namespace MFCheck.Form
             fileGrid.ItemsSource = m_MayaList;
         }
 
-
         private void BtnCheck_Click(object sender, RoutedEventArgs e)
         {
             if (null == m_MayaList || m_MayaList.Count == 0)
@@ -65,16 +67,37 @@ namespace MFCheck.Form
             }
 
             SetOperationEnable(false);
+
+            // 重置文件列表
+            foreach (var file in m_MayaList)
+            {
+                file.ResetStatus();
+            }
+
             m_Event.Set();
+        }
+
+        // 导出文件
+        private void BtnExport_Click(object sender, RoutedEventArgs e)
+        {
+            //if (m_Event.)
+        }
+
+        //选择单元格
+        private void FileGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ShowFileInfo((MayaInfo)fileGrid.SelectedItem);
         }
 
         private void SetOperationEnable(bool enable)
         {
             btnOpen.IsEnabled = enable;
             btnCheck.IsEnabled = enable;
+            btnExport.IsEnabled = enable;
             statePanel.Visibility = enable == true ? Visibility.Hidden : Visibility.Visible;
         }
 
+        //遍历文件夹读取文件列表
         private List<MayaInfo> GetFileFullPath(string folder, string extName)
         {
             List<MayaInfo> fileList = new List<MayaInfo>();
@@ -84,14 +107,7 @@ namespace MFCheck.Form
 
             foreach (var file in fileInfos)
             {
-                MayaInfo mayaInfo = new MayaInfo()
-                {
-                    Name = file.Name,
-                    Path = file.DirectoryName,
-                    FullName = file.FullName,
-                };
-
-                fileList.Add(mayaInfo);
+                fileList.Add(new MayaInfo(file.FullName));
             }
 
             DirectoryInfo[] dirInfos = root.GetDirectories();
@@ -106,59 +122,105 @@ namespace MFCheck.Form
             return fileList;
         }
 
-        private void FileThread()
+        //读取线程
+        private void ReadThread()
         {
             while(true)
             {
                 m_Event.WaitOne();
-                
+
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    txtNotice.Inlines.Clear();
+                }));
+
+
+                Dictionary<string, MayaInfo> AssetDic = new Dictionary<string, MayaInfo>();
+
                 foreach (var file in m_MayaList)
                 {
                     file.Status = "... ...";
 
-                    //检查文件名规范
-                    if (!CurProject.TestingFileName(Path.GetFileNameWithoutExtension(file.FullName)))
-                    {
-                        InvokeFileError(file, "文件命名错误");
-                        continue;
-                    }
-
                     MayaDocument document = new MayaDocument();
                     if (!document.Load(file.FullName))
                     {
-                        InvokeFileError(file, document.Error);
+                        Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            txtNotice.Inlines.Add(document.Error);
+                            txtNotice.Inlines.Add(new LineBreak());
+                        }));
+
+                        file.Error = document.Error;
+                        file.Status = "失败";
                         continue;
                     }
 
-                    // 检查规范
-                    bool bSucceed = true;
-                    foreach (var root in document.RootElements)
+                    //加载引用文件
+                    for (int i = 0; i < document.MayaReferenceList.Count; ++i)
                     {
-                        MayaElement rootEle = document.GetMayaElement(root);
+                        MayaInfo mayaAsset = null;
 
-                        //检查模型命名规范
-                        if (!CheckModNaming(rootEle))
+                        MayaReference mayaRef = document.MayaReferenceList[i];
+                        if (AssetDic.ContainsKey(mayaRef.ReferenceNode))
                         {
-                            bSucceed = false;
-                            InvokeFileError(file, "模型命名错误");
-                            break;
+                            mayaAsset = AssetDic[mayaRef.ReferenceNode];
+                        }
+                        else
+                        {
+                            mayaAsset = new MayaInfo(mayaRef.ReferenceFile);
+                            AssetDic[mayaRef.ReferenceNode] = mayaAsset;
+
+                            MayaDocument assetDoc = new MayaDocument();
+                            mayaRef.Document = assetDoc;
+
+                            if (!assetDoc.Load(mayaRef.ReferenceFile))
+                            {
+                                Dispatcher.BeginInvoke(new Action(() =>
+                                {
+                                    txtNotice.Inlines.Add(assetDoc.Error);
+                                    txtNotice.Inlines.Add(new LineBreak());
+                                }));
+
+                                mayaAsset.Error = assetDoc.Error;
+                            }
+                            else
+                            {
+                                foreach (var rootEle in assetDoc.RootElements)
+                                {
+                                    if (IsModel(rootEle))
+                                    {
+                                        ModelNode node = new ModelNode();
+                                        node.RootName = rootEle.Name;
+                                        foreach (var child in rootEle.Children)
+                                        {
+                                            node.ChildName.Add(child.Name);
+                                        }
+                                        mayaAsset.Models.Add(node);
+                                    }
+                                }
+                            }
                         }
 
-                        //检查相机命名规范
-                        if (!CheckCamNaming(rootEle))
+                        file.Assets.Add(mayaAsset);
+                    }
+
+                    //收集摄像机
+                    foreach (var rootEle in document.RootElements)
+                    {
+                        if (IsCamera(rootEle))
                         {
-                            bSucceed = false;
-                            InvokeFileError(file, "相机命名错误");
-                            break;
+                            file.Cameras.Add(rootEle.Name);
                         }
                     }
 
-                    if (bSucceed)
+                    //验证命名
+                    if (TestNaming(file))
                     {
-                        Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            file.Status = "成功";
-                        }));
+                        file.Status = "成功";
+                    }
+                    else
+                    {
+                        file.Status = "失败";
                     }
                 }
 
@@ -170,49 +232,143 @@ namespace MFCheck.Form
             }
         }
 
-        //检查模型命名
-        private bool CheckModNaming(MayaElement rootEle)
+        // 验证命名
+        private bool TestNaming(MayaInfo mayaInfo)
         {
-            if (rootEle.Type != MayaType.MTransform)
+            if (mayaInfo.Cameras.Count() != 1)
             {
-                return true;
+                return false;
             }
 
-            string modName = rootEle.NodeName.Split(':').Last();
-            if(!CurProject.IsModName(modName))
+            if (!CurProject.TestingCamName(mayaInfo.Cameras[0]))
             {
-                return true;
+                return false;
             }
 
-            return CurProject.TestingModName(modName);
+            //检查模型命名
+            foreach(var asset in mayaInfo.Assets)
+            {
+                if (!string.IsNullOrEmpty(asset.Error))
+                {
+                    return false;
+                }
+
+                foreach(var node in asset.Models)
+                {
+                    if (!CurProject.TestingModName(node.RootName))
+                    {
+                        return false;
+                    }
+
+                    //检查模型、骨骼、控制器
+                }
+            }
+
+            return true;
         }
 
-        //检查相机命令
-        private bool CheckCamNaming(MayaElement rootEle)
+        //是否是模型
+        private bool IsModel(MayaElement rootEle)
         {
-            if (rootEle.Type != MayaType.MCamera)
+            if (rootEle.Type != MayaElementType.METransform)
             {
-                return true;
+                return false;
             }
 
-            string camName = rootEle.NodeName.Split(':').Last();
-            if(!CurProject.IsCameraName(camName))
+            //必须有模型、骨骼、控制器，三个部分组成
+            if (rootEle.Children.Count() != 3)
             {
-                return true;
+                return false;
             }
 
-            return CurProject.TestingCamName(camName);
+            return false;
+        }
+
+        //是否是相机
+        private bool IsCamera(MayaElement rootEle)
+        {
+            // 去除系统创建的节点
+            if ("persp" == rootEle.Name || "top" == rootEle.Name ||
+                "front" == rootEle.Name || "side" == rootEle.Name)
+            {
+                return false;
+            }
+
+            if (rootEle.Type != MayaElementType.METransform)
+            {
+                return false;
+            }
+
+            if (rootEle.Children.Count() != 1)
+            {
+                return false;
+            }
+
+            if (rootEle.Children[0].Type != MayaElementType.MECamera)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         //文件夹从错误
         private void InvokeFileError(MayaInfo info, string desc)
         {
-            string error = desc + "：" + info.Name +"\n";
+            string error = desc + ": " + info.Name +"\n";
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 info.Status = "失败";
                 txtNotice.Inlines.Add(error);
             }));
+        }
+ 
+        //显示文件信息
+        private void ShowFileInfo(MayaInfo mayaInfo)
+        {
+            if (null == mayaInfo)
+            {
+                return;
+            }
+
+            txtNotice.Inlines.Clear();
+
+            // 显示文件名
+            txtNotice.Inlines.Add("文件名称：");
+            if (CurProject.TestingFileName(mayaInfo.Name))
+                txtNotice.Inlines.Add(mayaInfo.Name);
+            else
+                txtNotice.Inlines.Add(new Run(mayaInfo.Name) { Foreground = Brushes.Red });
+            txtNotice.Inlines.Add(new LineBreak());
+
+            // 显示相机名称
+            txtNotice.Inlines.Add("相机名称：");
+            int cameraCount = mayaInfo.Cameras.Count();
+            if (cameraCount == 0)
+            {
+                txtNotice.Inlines.Add(new Run("无法找到相机") { Foreground = Brushes.Red });
+            }
+            else if (cameraCount == 1)
+            {
+                if (CurProject.TestingCamName(mayaInfo.Cameras[0]))
+                    txtNotice.Inlines.Add(mayaInfo.Cameras[0]);
+                else
+                    txtNotice.Inlines.Add(new Run(mayaInfo.Cameras[0]) { Foreground = Brushes.Red });
+            }
+            else
+            {
+                txtNotice.Inlines.Add(new Run(mayaInfo.Cameras[0]) { Foreground = Brushes.Red });
+                for (int i = 1; i < cameraCount; ++i)
+                {
+                    string showInfo = "          " + mayaInfo.Cameras[i];
+                    txtNotice.Inlines.Add(new Run(showInfo) { Foreground = Brushes.Red });
+                }
+            }
+            txtNotice.Inlines.Add(new LineBreak());
+
+            // 显示模型名称
+            txtNotice.Inlines.Add("模型名称：");
+
         }
 
         private ObservableCollection<MayaInfo> m_MayaList;
@@ -220,25 +376,59 @@ namespace MFCheck.Form
         private AutoResetEvent m_Event = new AutoResetEvent(false);
         private string m_strSelectPath;
         private Project CurProject { set; get; }
+
     }
 
+    //模型节点
+    class ModelNode
+    {
+        public string RootName { get; set; }
+        public List<string> ChildName { get; } = new List<string>();
+    }
 
+    //文件信息
     class MayaInfo : INotifyPropertyChanged
     {
-        //文件名
-        public string Name { get; set; }
+        private string m_Status;
+        private string m_Prodect;
 
-        //文件路径
-        public string Path { get; set; }
+        public MayaInfo(string fullName)
+        {
+            FullName = fullName;
+            Name = Path.GetFileNameWithoutExtension(fullName);
+        }
+
+        //文件名
+        public string Name { get; }
 
         //全路径名
-        public string FullName { get; set; }
+        public string FullName { get; }
 
-        //Maya版本
-        public string Product { get; set; }
+        //加载文件产生的错误
+        public string Error { get; set; }
+
+        //相机列表
+        public List<string> Cameras { get; } = new List<string>();
+
+        //模型列表
+        public List<ModelNode> Models { get; } = new List<ModelNode>();
+
+        //资产信息
+        public List<MayaInfo> Assets { get; } = new List<MayaInfo>();
+
+        //Maya 版本
+        public string Product
+        {
+            get { return m_Prodect; }
+            set
+            {
+                m_Prodect = value;
+                if (null != PropertyChanged)
+                    PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Product"));
+            }
+        }
 
         //文件状态
-        private string m_Status;
         public string Status
         {
             get { return m_Status; }
@@ -250,6 +440,12 @@ namespace MFCheck.Form
                     PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Status"));
                 }
             }
+        }
+
+        public void ResetStatus()
+        {
+            Product = "";
+            Status = "";
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

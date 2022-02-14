@@ -15,8 +15,7 @@
         </Style>
 
         <Style x:Key="funcButton" TargetType="Button">
-            <Setter Property="Margin" Value="0 5 0 0"/>
-            <Setter Property="Width" Value="80"/>
+            <Setter Property="Margin" Value="5 5 5 5"/>
             <Setter Property="Height" Value="40" />
         </Style>
         
@@ -24,15 +23,15 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="120"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10*"/>
         </Grid.ColumnDefinitions>
 
         <Border Grid.Column="0" BorderThickness="1" BorderBrush="#E5E5E5">
             <StackPanel>
                 <Button x:Name="btnOpen" Content="打开" Click="BtnOpen_Click" Style="{StaticResource funcButton}"/>
                 <Button x:Name="btnCheck" Content="命名检查"  Click="BtnCheck_Click" Style="{StaticResource funcButton}"/>
-
+                <Button x:Name="btnExport" Content="导出结果"  Click="BtnExport_Click" Style="{StaticResource funcButton}"/>
             </StackPanel>
         </Border>
 
@@ -44,17 +43,19 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0">
-                <DataGrid x:Name="fileGrid" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
+                <DataGrid x:Name="fileGrid" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" SelectionChanged="FileGrid_SelectionChanged">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding Path}" Header="文件路径"/>
+                        <DataGridTextColumn Binding="{Binding FullName}" Header="文件路径"/>
                         <DataGridTextColumn Binding="{Binding Name}" Header="文件名"/>
-                        <DataGridTextColumn Binding="{Binding Status}" Header="Status"/>
+                        <DataGridTextColumn Binding="{Binding ModName}" Header="最后修改时间"/>
+                        <DataGridTextColumn Binding="{Binding CamName}" Header="Maya版本"/>
+                        <DataGridTextColumn Binding="{Binding Status}" Header="文件状态"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>
 
             <StackPanel Grid.Row="1">
-                <TextBlock x:Name="txtNotice" TextWrapping="Wrap"/>
+                <TextBlock x:Name="txtNotice" TextWrapping="Wrap" Margin="10 0 10 0" FontSize="16"/>
             </StackPanel>
             
             <StackPanel x:Name="statePanel" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">

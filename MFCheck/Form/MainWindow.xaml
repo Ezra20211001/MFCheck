@@ -7,20 +7,11 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="700" Width="1200" WindowStartupLocation="CenterScreen" MinWidth="20">
     <Window.Resources>
-        <DataTemplate x:Key="ProjItemTemplate">
-            <Grid Height="50" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="210"/>
-                    <!--<ColumnDefinition Width="20"/>-->
-                </Grid.ColumnDefinitions>
-                <TextBlock Name="projName" Text="{Binding Name}" Grid.Row="0" FontSize="25" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <DataTemplate x:Key="ProjItemTemplate" >
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Name="projName" Text="{Binding Name}" Grid.Row="0" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <TextBlock Name="projDesc" Text="{Binding Description}" Grid.Row="1" Foreground="#FF4D4949" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <!--<Button Name="delProject" Content="X" FontSize="10" Grid.Row="0" Grid.Column="1" Width="15" Height="15"/>-->
-            </Grid>
+            </StackPanel>
         </DataTemplate>
 
         <Style x:Key="defLabel" TargetType="Label">
@@ -64,12 +55,12 @@
         <Grid Grid.Row="1" Background="{DynamicResource {x:Static SystemColors.InactiveBorderBrushKey}}" />
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="240"/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="5*"/>
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0" BorderThickness="1" BorderBrush="#E5E5E5">
-                <ListBox Name="ProjList" Width="240"
+                <ListBox Name="ProjList" 
                      HorizontalAlignment="Center" VerticalAlignment="Top"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -118,7 +109,7 @@
                     <Label Style="{StaticResource defLabel}" Content="工作目录"/>
                     <TextBox Style="{StaticResource defTextBox}" x:Name="txtFilePath" />
                 </StackPanel>-->
-                
+
                 <StackPanel Grid.Row="6" Style="{StaticResource defStackPanel}">
                     <Button Style="{StaticResource defButton}" x:Name="btnSel" Content="选择" Margin="0,0,10,0" Click="BtnSel_Click"/>
                     <Button Style="{StaticResource defButton}" x:Name="btnEdit" Content="编辑" Margin="0,0,10,0" Click="BtnEdit_Click"/>

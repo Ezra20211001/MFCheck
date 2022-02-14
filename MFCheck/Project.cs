@@ -154,7 +154,7 @@ namespace MFCheck
         {
             if (string.IsNullOrEmpty(FileNaming))
             {
-                return true;
+                return false;
             }
 
             string[] nameSplit = name.Split(SPILT_CHA);
