@@ -56,8 +56,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Form\ExportWizard.xaml.cs">
+      <DependentUpon>ExportWizard.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utility\MultiMap.cs" />
     <Page Include="Form\About.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Form\ExportWizard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

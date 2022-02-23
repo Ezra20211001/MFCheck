@@ -60,17 +60,27 @@
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0" BorderThickness="1" BorderBrush="#E5E5E5">
-                <ListBox Name="ProjList" 
-                     HorizontalAlignment="Center" VerticalAlignment="Top"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     ScrollViewer.VerticalScrollBarVisibility="Auto"
-                     SelectionChanged="ProjList_SelectionChanged"
-                     ItemTemplate="{StaticResource ProjItemTemplate}" BorderThickness="0" >
+                <ListBox Name="ProjList" VerticalAlignment="Top" SelectionChanged="ProjList_SelectionChanged" BorderThickness="0">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
+                                <TextBlock Name="projName" Text="{Binding Name}" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Name="projDesc" Text="{Binding Description}" Foreground="#FF4D4949" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
                 </ListBox>
             </Border>
 
-            <Grid Grid.Column="1" DataContext="{Binding Path=SelectedItem, ElementName=ProjList}">
+            <Grid Grid.Column="1" x:Name="SelectionInfo" DataContext="{Binding Path=SelectedItem, ElementName=ProjList}">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="50"/>
@@ -96,21 +106,26 @@
                 </StackPanel>
 
                 <StackPanel Grid.Row="3" Style="{StaticResource defStackPanel}">
-                    <Label Style="{StaticResource defLabel}" Content="模型命名"/>
-                    <TextBox Style="{StaticResource defTextBox}" x:Name="txtModNaming" Text="{Binding ModNaming}" />
+                    <Label Style="{StaticResource defLabel}" Content="场景命名"/>
+                    <TextBox Style="{StaticResource defTextBox}" x:Name="txtSceneNaming" Text="{Binding SceneNaming}" />
                 </StackPanel>
 
                 <StackPanel Grid.Row="4" Style="{StaticResource defStackPanel}">
+                    <Label Style="{StaticResource defLabel}" Content="角色命名"/>
+                    <TextBox Style="{StaticResource defTextBox}" x:Name="txtCharNaming" Text="{Binding CharNaming}" />
+                </StackPanel>
+                
+                <StackPanel Grid.Row="5" Style="{StaticResource defStackPanel}">
+                    <Label Style="{StaticResource defLabel}" Content="道具命名"/>
+                    <TextBox Style="{StaticResource defTextBox}" x:Name="txtPropNaming" Text="{Binding PropNaming}" />
+                </StackPanel>
+                
+                <StackPanel Grid.Row="6" Style="{StaticResource defStackPanel}">
                     <Label Style="{StaticResource defLabel}" Content="相机命名"/>
                     <TextBox Style="{StaticResource defTextBox}" x:Name="txtCamNaming" Text="{Binding CamNaming}" />
                 </StackPanel>
-
-                <!--<StackPanel Grid.Row="5" Style="{StaticResource defStackPanel}">
-                    <Label Style="{StaticResource defLabel}" Content="工作目录"/>
-                    <TextBox Style="{StaticResource defTextBox}" x:Name="txtFilePath" />
-                </StackPanel>-->
-
-                <StackPanel Grid.Row="6" Style="{StaticResource defStackPanel}">
+                
+                <StackPanel Grid.Row="8" Style="{StaticResource defStackPanel}">
                     <Button Style="{StaticResource defButton}" x:Name="btnSel" Content="选择" Margin="0,0,10,0" Click="BtnSel_Click"/>
                     <Button Style="{StaticResource defButton}" x:Name="btnEdit" Content="编辑" Margin="0,0,10,0" Click="BtnEdit_Click"/>
                     <Button Style="{StaticResource defButton}" x:Name="btnDel" Content="删除" Click="BtnDel_Click" />

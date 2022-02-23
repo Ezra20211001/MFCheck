@@ -1,16 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace MFCheck.Form
 {
@@ -32,7 +22,9 @@ namespace MFCheck.Form
             txtProjName.DataContext = CurProject;
             txtProDesc.DataContext = CurProject;
             txtFileNaming.DataContext = CurProject;
-            txtModNaming.DataContext = CurProject;
+            txtSceneNaming.DataContext = CurProject;
+            txtCharacterNaming.DataContext = CurProject;
+            txtPropNaming.DataContext = CurProject;
             txtCamNaming.DataContext = CurProject;
 
             if (!string.IsNullOrEmpty(CurProject.Name))
@@ -189,13 +181,15 @@ namespace MFCheck.Form
 
         private void BtnOK_Click(object sender, RoutedEventArgs e)
         {
-            string propName = txtProjName.Text;
+            string propjName = txtProjName.Text;
             string propDesc = txtProDesc.Text;
             string fileNaming = txtFileNaming.Text;
-            string modNaming = txtModNaming.Text;
+            string sceneNaming = txtSceneNaming.Text;
+            string charNaming = txtCharacterNaming.Text;
+            string propNaming = txtPropNaming.Text;
             string camNaming = txtCamNaming.Text;
 
-            if (string.IsNullOrEmpty(propName))
+            if (string.IsNullOrEmpty(propjName))
             {
                 txtProjName.SetValue(StyleProperty, FindResource("errTextBox"));
                 MessageBox.Show("输入项目名称", "Error");
@@ -206,7 +200,7 @@ namespace MFCheck.Form
                 txtProjName.SetValue(StyleProperty, FindResource("norTextBox"));
             }
 
-            //检查文件命名
+            //检查文件命名合法性
             if (!string.IsNullOrEmpty(fileNaming))
             {
                 string[] result = fileNaming.Split('_');
@@ -222,21 +216,55 @@ namespace MFCheck.Form
                 txtFileNaming.SetValue(StyleProperty, FindResource("norTextBox"));
             }
 
-            if (!string.IsNullOrEmpty(modNaming))
+            //检查场景命名合法性
+            if (!string.IsNullOrEmpty(sceneNaming))
             {
-                string[] result = modNaming.Split('_');
+                string[] result = sceneNaming.Split('_');
                 foreach (var prop in result)
                 {
                     if (!CurProject.FindProperty(prop))
                     {
                         MessageBox.Show("属性不存在:" + prop, "Error");
-                        txtModNaming.SetValue(StyleProperty, FindResource("errTextBox"));
+                        txtSceneNaming.SetValue(StyleProperty, FindResource("errTextBox"));
                         return;
                     }
                 }
-                txtModNaming.SetValue(StyleProperty, FindResource("norTextBox"));
+                txtSceneNaming.SetValue(StyleProperty, FindResource("norTextBox"));
             }
 
+            //检查角色命名合法性
+            if (!string.IsNullOrEmpty(charNaming))
+            {
+                string[] result = charNaming.Split('_');
+                foreach (var prop in result)
+                {
+                    if (!CurProject.FindProperty(prop))
+                    {
+                        MessageBox.Show("属性不存在:" + prop, "Error");
+                        txtCharacterNaming.SetValue(StyleProperty, FindResource("errTextBox"));
+                        return;
+                    }
+                }
+                txtCharacterNaming.SetValue(StyleProperty, FindResource("norTextBox"));
+            }
+
+            //检查道具命名合法性
+            if (!string.IsNullOrEmpty(propNaming))
+            {
+                string[] result = propNaming.Split('_');
+                foreach (var prop in result)
+                {
+                    if (!CurProject.FindProperty(prop))
+                    {
+                        MessageBox.Show("属性不存在:" + prop, "Error");
+                        txtPropNaming.SetValue(StyleProperty, FindResource("errTextBox"));
+                        return;
+                    }
+                }
+                txtPropNaming.SetValue(StyleProperty, FindResource("norTextBox"));
+            }
+
+            //检查相机命名合法性
             if (!string.IsNullOrEmpty(camNaming))
             {
                 string[] result = camNaming.Split('_');
@@ -255,7 +283,7 @@ namespace MFCheck.Form
             // 创建模式
             if (string.IsNullOrEmpty(CurProject.Name))
             {
-                Project project = (Application.Current as App).GetProject(propName);
+                Project project = (Application.Current as App).GetProject(propjName);
                 if (null != project)
                 {
                     txtProjName.SetValue(StyleProperty, FindResource("errTextBox"));
@@ -264,10 +292,12 @@ namespace MFCheck.Form
                 }
             }
 
-            CurProject.Name = propName;
+            CurProject.Name = propjName;
             CurProject.Description = propDesc;
             CurProject.FileNaming = fileNaming;
-            CurProject.ModNaming = modNaming;
+            CurProject.CharNaming = charNaming;
+            CurProject.PropNaming = propNaming;
+            CurProject.SceneNaming = sceneNaming;
             CurProject.CamNaming = camNaming;
 
             (Application.Current as App).AddProject(CurProject);

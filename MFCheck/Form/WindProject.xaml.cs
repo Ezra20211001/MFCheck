@@ -80,11 +80,15 @@ namespace MFCheck.Form
         // 导出文件
         private void BtnExport_Click(object sender, RoutedEventArgs e)
         {
-            //if (m_Event.)
+            ExportWizard exportWizard = new ExportWizard
+            {
+                Owner = this
+            };
+            exportWizard.ShowDialog();
         }
 
         //选择单元格
-        private void FileGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void FileGrid_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ShowFileInfo((MayaInfo)fileGrid.SelectedItem);
         }
@@ -107,7 +111,11 @@ namespace MFCheck.Form
 
             foreach (var file in fileInfos)
             {
-                fileList.Add(new MayaInfo(file.FullName));
+                fileList.Add(new MayaInfo(file.FullName)
+                {
+                    CreateTime = file.CreationTime.ToString(),
+                    ModifyTime = file.LastWriteTime.ToString(),
+                });
             }
 
             DirectoryInfo[] dirInfos = root.GetDirectories();
@@ -189,19 +197,31 @@ namespace MFCheck.Form
                                 {
                                     if (IsModel(rootEle))
                                     {
-                                        ModelNode node = new ModelNode();
-                                        node.RootName = rootEle.Name;
+                                        ModelNode node = new ModelNode
+                                        {
+                                            RootName = rootEle.Name
+                                        };
+
                                         foreach (var child in rootEle.Children)
                                         {
                                             node.ChildName.Add(child.Name);
                                         }
+
                                         mayaAsset.Models.Add(node);
                                     }
                                 }
                             }
                         }
 
-                        file.Assets.Add(mayaAsset);
+                        if (!file.AddAsset(mayaAsset))
+                        {
+                            mayaAsset.Error = "无法识别资产类型";
+                            Dispatcher.BeginInvoke(new Action(() =>
+                            {
+                                txtNotice.Inlines.Add(mayaAsset.Error + mayaAsset.FullName);
+                                txtNotice.Inlines.Add(new LineBreak());
+                            }));
+                        }
                     }
 
                     //收集摄像机
@@ -240,27 +260,102 @@ namespace MFCheck.Form
                 return false;
             }
 
-            if (!CurProject.TestingCamName(mayaInfo.Cameras[0]))
+            if (!CurProject.TestCamName(mayaInfo.Cameras[0]))
             {
                 return false;
             }
 
-            //检查模型命名
-            foreach(var asset in mayaInfo.Assets)
+            //检查场景资产
+            foreach (var asset in mayaInfo.SceneAssets)
             {
                 if (!string.IsNullOrEmpty(asset.Error))
                 {
                     return false;
                 }
 
-                foreach(var node in asset.Models)
+                foreach (var node in asset.Models)
                 {
-                    if (!CurProject.TestingModName(node.RootName))
+                    if (!CurProject.TestSceneName(node.RootName))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+
+            //检查角色资产
+            foreach (var asset in mayaInfo.CharAssets)
+            {
+                if (!string.IsNullOrEmpty(asset.Error))
+                {
+                    return false;
+                }
+
+                foreach (var node in asset.Models)
+                {
+                    if (!CurProject.TestCharName(node.RootName))
                     {
                         return false;
                     }
 
-                    //检查模型、骨骼、控制器
+                    if (node.ChildName.Count != 3)
+                    {
+                        return false;
+                    }
+
+                    string rootName = node.RootName.Substring(0, node.RootName.Count() - 3);
+
+                    string modName = rootName + "Mod";
+                    string jointName = rootName + "Joint";
+                    string controlName = rootName + "Ctrl";
+
+                    foreach (var child in node.ChildName)
+                    {
+                        if (child != modName &&
+                            child !=jointName &&
+                            child != controlName)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            //检查道具资产
+            foreach (var asset in mayaInfo.PropAssets)
+            {
+                if (!string.IsNullOrEmpty(asset.Error))
+                {
+                    return false;
+                }
+
+                foreach (var node in asset.Models)
+                {
+                    if (!CurProject.TestPropName(node.RootName))
+                    {
+                        return false;
+                    }
+
+                    if (node.ChildName.Count != 3)
+                    {
+                        return false;
+                    }
+
+                    string rootName = node.RootName.Substring(0, node.RootName.Count() - 3);
+
+                    string modName = rootName + "Mod";
+                    string jointName = rootName + "Joint";
+                    string controlName = rootName + "Ctrl";
+
+                    foreach (var child in node.ChildName)
+                    {
+                        if (child != modName &&
+                            child != jointName &&
+                            child != controlName)
+                        {
+                            return false;
+                        }
+                    }
                 }
             }
 
@@ -275,13 +370,14 @@ namespace MFCheck.Form
                 return false;
             }
 
-            //必须有模型、骨骼、控制器，三个部分组成
-            if (rootEle.Children.Count() != 3)
+            // 去除系统创建的节点
+            if ("persp" == rootEle.Name || "top" == rootEle.Name ||
+                "front" == rootEle.Name || "side" == rootEle.Name)
             {
                 return false;
             }
 
-            return false;
+            return CurProject.IsModName(rootEle.Name);
         }
 
         //是否是相机
@@ -311,17 +407,6 @@ namespace MFCheck.Form
 
             return true;
         }
-
-        //文件夹从错误
-        private void InvokeFileError(MayaInfo info, string desc)
-        {
-            string error = desc + ": " + info.Name +"\n";
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                info.Status = "失败";
-                txtNotice.Inlines.Add(error);
-            }));
-        }
  
         //显示文件信息
         private void ShowFileInfo(MayaInfo mayaInfo)
@@ -331,44 +416,183 @@ namespace MFCheck.Form
                 return;
             }
 
-            txtNotice.Inlines.Clear();
+            string placeholder = "                 ";
 
-            // 显示文件名
-            txtNotice.Inlines.Add("文件名称：");
-            if (CurProject.TestingFileName(mayaInfo.Name))
-                txtNotice.Inlines.Add(mayaInfo.Name);
-            else
-                txtNotice.Inlines.Add(new Run(mayaInfo.Name) { Foreground = Brushes.Red });
-            txtNotice.Inlines.Add(new LineBreak());
+            List<Inline> result = new List<Inline>();
 
-            // 显示相机名称
-            txtNotice.Inlines.Add("相机名称：");
-            int cameraCount = mayaInfo.Cameras.Count();
-            if (cameraCount == 0)
+            result.Add(new Run("文件名称："));
+            if (CurProject.TestFileName(mayaInfo.Name))
             {
-                txtNotice.Inlines.Add(new Run("无法找到相机") { Foreground = Brushes.Red });
-            }
-            else if (cameraCount == 1)
-            {
-                if (CurProject.TestingCamName(mayaInfo.Cameras[0]))
-                    txtNotice.Inlines.Add(mayaInfo.Cameras[0]);
-                else
-                    txtNotice.Inlines.Add(new Run(mayaInfo.Cameras[0]) { Foreground = Brushes.Red });
+                result.Add(new Run(mayaInfo.Name));
             }
             else
             {
-                txtNotice.Inlines.Add(new Run(mayaInfo.Cameras[0]) { Foreground = Brushes.Red });
-                for (int i = 1; i < cameraCount; ++i)
+                result.Add(new Run(mayaInfo.Name) { Foreground = Brushes.Red });
+                result.Add(new LineBreak());
+                result.Add(new Run(placeholder + "(文件名不正确)") { Foreground = Brushes.Red });
+            }
+
+            result.Add(new LineBreak());
+            result.Add(new Run("相机列表："));
+            if (mayaInfo.Cameras.Count == 0)
+            {
+                result.Add(new Run("无法找到相机") { Foreground = Brushes.Red });
+            }
+            else if (mayaInfo.Cameras.Count == 1)
+            {
+                result.Add(new Run(mayaInfo.Cameras[0]));
+            }
+            else
+            {
+                result.Add(new Run(mayaInfo.Cameras[0]));
+                for (int i = 1; i < mayaInfo.Cameras.Count; ++i)
                 {
-                    string showInfo = "          " + mayaInfo.Cameras[i];
-                    txtNotice.Inlines.Add(new Run(showInfo) { Foreground = Brushes.Red });
+                    result.Add(new LineBreak());
+                    result.Add(new Run(placeholder + mayaInfo.Cameras[i]) { Foreground = Brushes.Red });
                 }
             }
-            txtNotice.Inlines.Add(new LineBreak());
 
-            // 显示模型名称
-            txtNotice.Inlines.Add("模型名称：");
+            // 场景
+            result.Add(new LineBreak());
+            result.Add(new Run("场景列表："));
+            for (int i = 0; i < mayaInfo.SceneAssets.Count; ++i)
+            {
+                var sceneInfo = mayaInfo.SceneAssets[0];
+                int curSceneCount = sceneInfo.Models.Count;
+                for (int j = 0; j < curSceneCount; ++j)
+                {
+                    string sceneName = sceneInfo.Models[j].RootName;
+                    Inline inline = null;
+                    if (i == 0 && j == 0)
+                    {
+                        inline = new Run(sceneName);
+                    }
+                    else
+                    {
+                        result.Add(new LineBreak());
+                        inline = new Run(placeholder + sceneName);
+                    }
 
+                    result.Add(inline);
+
+                    if (!CurProject.TestSceneName(sceneName))
+                    {
+                        inline.Foreground = Brushes.Red;
+                    }
+                }
+            }
+
+            // 角色
+            result.Add(new LineBreak());
+            result.Add(new Run("角色列表："));
+            for (int i = 0; i < mayaInfo.CharAssets.Count; ++i)
+            {
+                var charInfo = mayaInfo.CharAssets[0];
+                int curCharCount = charInfo.Models.Count;
+                for (int j = 0; j < curCharCount; ++j)
+                {
+                    string charName = charInfo.Models[j].RootName;
+                    Inline inline = null;
+                    if (i == 0 && j == 0)
+                    {
+                        inline = new Run(charName);
+                    }
+                    else
+                    {
+                        result.Add(new LineBreak());
+                        inline = new Run(placeholder + charName);
+                    }
+
+                    result.Add(inline);
+
+                    if (!CurProject.TestCharName(charName))
+                    {
+                        inline.Foreground = Brushes.Red;
+                    }
+
+                    if (charInfo.Models[j].ChildName.Count != 3)
+                    {
+                        inline.Foreground = Brushes.Red;
+                    }
+
+                    string temp = charName.Substring(0, charName.Count() - 3);
+                    string modName = temp + "Mod";
+                    string jointName = temp + "Joint";
+                    string controlName = temp + "Ctrl";
+
+                    foreach (var name in charInfo.Models[j].ChildName)
+                    {
+                        Inline childLine = new Run(placeholder + "      " + name);                        
+                        if (name != modName && 
+                            name != jointName && 
+                            name != controlName)
+                        {
+                            childLine.Foreground = Brushes.Red;
+                        }
+                        result.Add(new LineBreak());
+                        result.Add(childLine);
+                    }
+                }
+            }
+
+            // 角色
+            result.Add(new LineBreak());
+            result.Add(new Run("道具列表："));
+            for (int i = 0; i < mayaInfo.PropAssets.Count; ++i)
+            {
+                var info = mayaInfo.PropAssets[0];
+                int modCount = info.Models.Count;
+                for (int j = 0; j < modCount; ++j)
+                {
+                    string rootName = info.Models[j].RootName;
+                    Inline inline = null;
+                    if (i == 0 && j == 0)
+                    {
+                        inline = new Run(rootName);
+                    }
+                    else
+                    {
+                        result.Add(new LineBreak());
+                        inline = new Run(placeholder + rootName);
+                    }
+
+                    result.Add(inline);
+
+                    if (!CurProject.TestPropName(rootName))
+                    {
+                        inline.Foreground = Brushes.Red;
+                    }
+
+                    if (info.Models[j].ChildName.Count != 3)
+                    {
+                        inline.Foreground = Brushes.Red;
+                    }
+
+                    string temp = rootName.Substring(0, rootName.Count() - 3);
+                    string modName = temp + "Mod";
+                    string jointName = temp + "Joint";
+                    string controlName = temp + "Ctrl";
+
+                    foreach (var name in info.Models[j].ChildName)
+                    {
+                        Inline childLine = new Run(placeholder + "      " + name);
+                        if (name != modName &&
+                            name != jointName &&
+                            name != controlName)
+                        {
+                            childLine.Foreground = Brushes.Red;
+                        }
+                        result.Add(new LineBreak());
+                        result.Add(childLine);
+                    }
+                }
+            }
+
+            txtNotice.Inlines.Clear();
+            foreach (var inline in result)
+            {
+                txtNotice.Inlines.Add(inline);
+            }
         }
 
         private ObservableCollection<MayaInfo> m_MayaList;
@@ -376,7 +600,6 @@ namespace MFCheck.Form
         private AutoResetEvent m_Event = new AutoResetEvent(false);
         private string m_strSelectPath;
         private Project CurProject { set; get; }
-
     }
 
     //模型节点
@@ -384,6 +607,15 @@ namespace MFCheck.Form
     {
         public string RootName { get; set; }
         public List<string> ChildName { get; } = new List<string>();
+    }
+
+    //资产类型
+    class MAssetType
+    {
+        public static readonly string Unknown = "unknown";
+        public static readonly string Character = "characters";
+        public static readonly string Scene = "environment";
+        public static readonly string Prop = "props";
     }
 
     //文件信息
@@ -396,6 +628,23 @@ namespace MFCheck.Form
         {
             FullName = fullName;
             Name = Path.GetFileNameWithoutExtension(fullName);
+
+            if (FullName.Contains(MAssetType.Character))
+            {
+                AssetType = MAssetType.Character;
+            }
+            else if (FullName.Contains("environment"))
+            {
+                AssetType = MAssetType.Scene;
+            }
+            else if (FullName.Contains("props"))
+            {
+                AssetType = MAssetType.Prop;
+            }
+            else
+            {
+                AssetType = MAssetType.Unknown;
+            }
         }
 
         //文件名
@@ -403,6 +652,15 @@ namespace MFCheck.Form
 
         //全路径名
         public string FullName { get; }
+
+        //文件创建时间
+        public string CreateTime { get; set; }
+
+        //文件修改时间
+        public string ModifyTime { get; set; }
+
+        //资产类型
+        public string AssetType { get; }
 
         //加载文件产生的错误
         public string Error { get; set; }
@@ -413,8 +671,37 @@ namespace MFCheck.Form
         //模型列表
         public List<ModelNode> Models { get; } = new List<ModelNode>();
 
-        //资产信息
-        public List<MayaInfo> Assets { get; } = new List<MayaInfo>();
+        //场景资产
+        public List<MayaInfo> SceneAssets { get; } = new List<MayaInfo>();
+
+        //角色资产
+        public List<MayaInfo> CharAssets { get; } = new List<MayaInfo>();
+
+        //道具资产
+        public List<MayaInfo> PropAssets { get; } = new List<MayaInfo>();
+
+        //添加资产
+        public bool AddAsset(MayaInfo assetInfo)
+        {
+            if (assetInfo.AssetType == MAssetType.Scene)
+            {
+                SceneAssets.Add(assetInfo);
+            }
+            else if (assetInfo.AssetType == MAssetType.Character)
+            {
+                CharAssets.Add(assetInfo);
+            }
+            else if (assetInfo.AssetType == MAssetType.Prop)
+            {
+                PropAssets.Add(assetInfo);
+            }
+            else
+            {
+                return false;
+            }
+
+            return true;
+        }
 
         //Maya 版本
         public string Product
@@ -446,6 +733,13 @@ namespace MFCheck.Form
         {
             Product = "";
             Status = "";
+
+            Error = "";
+            Cameras.Clear();
+            Models.Clear();
+            SceneAssets.Clear();
+            CharAssets.Clear();
+            PropAssets.Clear();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

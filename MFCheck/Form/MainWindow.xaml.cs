@@ -15,6 +15,7 @@ namespace MFCheck
             InitializeComponent();
             DataContext = this;
             ProjList.ItemsSource = (Application.Current as App).ProjectList.ToList();
+            SelectionInfo.Visibility = Visibility.Hidden;
         }
 
         private void About_Click(object sender, RoutedEventArgs e)
@@ -38,7 +39,14 @@ namespace MFCheck
 
         private void ProjList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            if (null == ProjList.SelectedItem)
+            {
+                SelectionInfo.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                SelectionInfo.Visibility = Visibility.Visible;
+            }
         }
 
         private void BtnSel_Click(object sender, RoutedEventArgs e)

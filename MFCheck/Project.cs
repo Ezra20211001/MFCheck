@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace MFCheck
 {
@@ -49,39 +46,169 @@ namespace MFCheck
             set
             {
                 m_FileNaming = value;
-                if (!string.IsNullOrEmpty(m_FileNaming))
+                if (string.IsNullOrEmpty(m_FileNaming))
                 {
-                    m_FileProps = m_FileNaming.Split(SPILT_CHA);
+                    m_FileProps = null;
                 }
                 else
                 {
-                    m_FileProps = null;
+                    m_FileProps = m_FileNaming.Split(SPILT_CHA);
                 }
             }
         }
 
-        // 模型命名方式
-        public string ModNaming
+        // 检查文件命名是否正确
+        public bool TestFileName(string name)
         {
-            get { return m_ModNaming; }
+            if (string.IsNullOrEmpty(m_FileNaming))
+            {
+                return false;
+            }
+
+            string[] nameSplit = name.Split(SPILT_CHA);
+            if (m_FileProps.Count() != nameSplit.Count())
+            {
+                return false;
+            }
+
+            for (int i = 0; i < m_FileProps.Count(); ++i)
+            {
+                if (!GetProperty(m_FileProps[i]).Testing(nameSplit[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // 场景命名
+        public string SceneNaming
+        {
+            get { return m_SceneNaming; }
             set
             {
-                m_ModNaming = value;
-                if (!string.IsNullOrEmpty(m_ModNaming))
+                m_SceneNaming = value;
+                if (string.IsNullOrEmpty(m_SceneNaming))
                 {
-                    m_ModProps = m_ModNaming.Split(SPILT_CHA);
-
-                    foreach (var prop in m_ModProps)
-                    {
-                        m_ModRegex += GetProperty(prop).Value + SPILT_CHA;
-                    }
+                    m_SceneProps = null;
                 }
                 else
                 {
-                    m_ModProps = null;
-                    m_ModRegex = "";
+                    m_SceneProps = m_SceneNaming.Split(SPILT_CHA);
                 }
             }
+        }
+
+        // 检查场景命名是否正确
+        public bool TestSceneName(string name)
+        {
+            if (string.IsNullOrEmpty(m_SceneNaming))
+            {
+                return true;
+            }
+
+            string[] nameSplit = name.Split(SPILT_CHA);
+            if (nameSplit.Count() != m_SceneProps.Count())
+            {
+                return false;
+            }
+
+            for (int i = 0; i < m_SceneProps.Count(); ++i)
+            {
+                if (!GetProperty(m_SceneProps[i]).Testing(nameSplit[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // 角色命名
+        public string CharNaming
+        {
+            get { return m_CharNaming; }
+            set
+            {
+                m_CharNaming = value;
+                if (string.IsNullOrEmpty(m_CharNaming))
+                {
+                    m_CharProps = null;
+                }
+                else
+                {
+                    m_CharProps = m_CharNaming.Split(SPILT_CHA);
+                }
+            }
+        }
+
+        // 检查角色命名是否正确
+        public bool TestCharName(string name)
+        {
+            if (string.IsNullOrEmpty(m_CharNaming))
+            {
+                return true;
+            }
+
+            string[] nameSplit = name.Split(SPILT_CHA);
+            if (nameSplit.Count() != m_CharProps.Count())
+            {
+                return false;
+            }
+
+            for (int i = 0; i < m_CharProps.Count(); ++i)
+            {
+                if (!GetProperty(m_CharProps[i]).Testing(nameSplit[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // 道具命名
+        public string PropNaming
+        {
+            get { return m_PropNaming; }
+            set
+            {
+                m_PropNaming = value;
+                if (string.IsNullOrEmpty(m_PropNaming))
+                {
+                    m_PropProps = null;
+                }
+                else
+                {
+                    m_PropProps = m_PropNaming.Split(SPILT_CHA);
+                }
+            }
+        }
+
+        // 检查道具命名是否正确
+        public bool TestPropName(string name)
+        {
+            if (string.IsNullOrEmpty(m_PropNaming))
+            {
+                return true;
+            }
+
+            string[] nameSplit = name.Split(SPILT_CHA);
+            if (nameSplit.Count() != m_PropProps.Count())
+            {
+                return false;
+            }
+
+            for (int i = 0; i < m_PropProps.Count(); ++i)
+            {
+                if (!GetProperty(m_PropProps[i]).Testing(nameSplit[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         // 相机命名方式
@@ -91,20 +218,40 @@ namespace MFCheck
             set
             {
                 m_CamNaming = value;
-                if (!string.IsNullOrEmpty(m_CamNaming))
+                if (string.IsNullOrEmpty(m_CamNaming))
                 {
-                    m_CamProps = m_CamNaming.Split(SPILT_CHA);
-                    foreach (var prop in m_CamProps)
-                    {
-                        m_CamRegex += GetProperty(prop).Value + SPILT_CHA;
-                    }
+                    m_CamProps = null;
                 }
                 else
                 {
-                    m_CamProps = null;
-                    m_CamRegex = "";
+                    m_CamProps = m_CamNaming.Split(SPILT_CHA);
                 }
             }
+        }
+
+        // 测试相机名称是否正确
+        public bool TestCamName(string name)
+        {
+            if (string.IsNullOrEmpty(m_CamNaming))
+            {
+                return true;
+            }
+
+            string[] nameSplit = name.Split(SPILT_CHA);
+            if (nameSplit.Count() != m_CamProps.Count())
+            {
+                return false;
+            }
+
+            for (int i = 0; i < m_CamProps.Count(); ++i)
+            {
+                if (!GetProperty(m_CamProps[i]).Testing(nameSplit[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         // 主属性
@@ -149,105 +296,36 @@ namespace MFCheck
             }
         }
 
-        // 测试文件命名是否正确
-        public bool TestingFileName(string name)
-        {
-            if (string.IsNullOrEmpty(FileNaming))
-            {
-                return false;
-            }
-
-            string[] nameSplit = name.Split(SPILT_CHA);
-            if (m_FileProps.Count() != nameSplit.Count())
-            {
-                return false;
-            }
-
-            for (int i = 0; i < m_FileProps.Count(); ++i)
-            {
-                if (!GetProperty(m_FileProps[i]).Testing(nameSplit[i]))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         // 是否是模型名称
         public bool IsModName(string name)
         {
-            return Regex.IsMatch(name, m_ModRegex);
+            return name.StartsWith(Name);
         }
-
-        // 测试模型名称是否正确
-        public bool TestingModName(string name)
-        {
-            if (string.IsNullOrEmpty(ModNaming))
-            {
-                return true;
-            }
-
-            string[] nameSplit = name.Split(SPILT_CHA);
-            if (nameSplit.Count() != m_ModProps.Count())
-            {
-                return false;
-            }
-
-            for (int i = 0; i < m_ModProps.Count(); ++i)
-            {
-                if (!GetProperty(m_FileProps[i]).Testing(nameSplit[i]))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        // 是否是相机名称
-        public bool IsCameraName(string name)
-        {
-            return Regex.IsMatch(name, m_CamRegex);
-        }
-
-        // 测试相机名称是否正确
-        public bool TestingCamName(string name)
-        {
-            if (string.IsNullOrEmpty(m_CamNaming))
-            {
-                return true;
-            }
-
-            string[] nameSplit = name.Split(SPILT_CHA);
-            if (nameSplit.Count() != m_CamProps.Count())
-            {
-                return false;
-            }
-
-            for (int i = 0; i < m_CamProps.Count(); ++i)
-            {
-                if (!GetProperty(m_CamProps[i]).Testing(nameSplit[i]))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
 
         private const char SPILT_CHA = '_';
         private string m_Name;
         private string m_Description;
+
+        //文件命名
         private string m_FileNaming;
-        private string m_ModNaming;
-        private string m_CamNaming;
         private string[] m_FileProps;
-        private string[] m_ModProps;
+
+        //场景命名
+        private string m_SceneNaming;
+        private string[] m_SceneProps;
+
+        //角色命名
+        private string m_CharNaming;
+        private string[] m_CharProps;
+
+        //道具命名
+        private string m_PropNaming;
+        private string[] m_PropProps;
+
+        //相机命名
+        private string m_CamNaming;
         private string[] m_CamProps;
-        private string m_ModRegex = "";
-        private string m_CamRegex = "";
+        
         private Dictionary<string, Property> m_Properties = new Dictionary<string, Property>();
     }
 }

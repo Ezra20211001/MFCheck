@@ -1,9 +1,8 @@
-﻿using System;
+﻿using MFCheck.Utility;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MFCheck
 {
@@ -40,17 +39,6 @@ namespace MFCheck
             return null;
         }
 
-        //获得元素信息
-        public MayaElement GetElement(string name)
-        {
-            if (m_NameIndices.ContainsKey(name))
-            {
-                return m_NameIndices[name];
-            }
-
-            return null;
-        }
-
         public bool Load(string fullName)
         {
             FullName = fullName;
@@ -62,11 +50,16 @@ namespace MFCheck
                 return false;
             }
 
- //           try
+            try
             {
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
+                    if (string.IsNullOrEmpty(line))
+                    {
+                        continue;
+                    }
+
                     string sub = line.Substring(0, 2);
                     if (sub == "//")
                     {
@@ -106,12 +99,12 @@ namespace MFCheck
 
                 return OnReadComplete();
             }
-//            catch (Exception ex)
+            catch (Exception ex)
             {
-//                Error = ex.ToString();
- //               return false;
+                Error = ex.ToString();
+                return false;
             }
- //           finally
+            finally
             {
                 reader.Close();
             }
@@ -170,27 +163,38 @@ namespace MFCheck
                 throw new Exception("无法解析命令！");
             }
 
-            m_NameIndices.Add(node.Name, node);
-
             //父节点为空，则判定为Root节点
             if (string.IsNullOrEmpty(node.ParentName))
             {
                 RootElements.Add(node);
+
+                //记录当前路径
+                m_TreePath.Add(node);
             }
             else
             {
-                //添加节点树信息
-                if (m_TreeInfo.ContainsKey(node.ParentName))
+                string parentName = node.ParentName.Split('|').Last();
+
+                //找到当前节点父节点
+                while (m_TreePath.Count > 0)
                 {
-                    m_TreeInfo[node.ParentName].Add(node.Name);
-                }
-                else
-                {
-                    List<string> children = new List<string>
+                    MayaElement parentNode = m_TreePath.ElementAt(m_TreePath.Count-1);
+                    if (parentNode.Name == parentName)
                     {
-                        node.Name
-                    };
-                    m_TreeInfo.Add(node.ParentName, children);
+                        parentNode.Children.Add(node);
+                        m_TreePath.Add(node);
+                        break;
+                    }
+                    else
+                    {
+                        m_TreePath.RemoveAt(m_TreePath.Count - 1);
+                    }
+                }
+
+                //没找到父节点，说明文档出错
+                if (m_TreePath.Count == 0)
+                {
+                    throw new Exception(string.Format("无法解析到父节点：node={0}, parent={1}", node.Name, node.ParentName));
                 }
             }
 
@@ -201,22 +205,12 @@ namespace MFCheck
         //读取结束，调整树结构
         private bool OnReadComplete()
         {
-            foreach (var node in m_TreeInfo)
-            {
-                MayaElement parent = m_NameIndices[node.Key];
-                foreach (var childName in node.Value)
-                {
-                    parent.AddChild(m_NameIndices[childName]);
-                }
-            }
-
-            m_TreeInfo.Clear();
+            m_TreePath.Clear();
             return true;
         }
 
         private Dictionary<string, MayaReference> m_References = new Dictionary<string, MayaReference>();
-        private Dictionary<string, MayaElement> m_NameIndices = new Dictionary<string, MayaElement>();
-        private Dictionary<string, List<string>> m_TreeInfo = new Dictionary<string, List<string>>();
+        private List<MayaElement> m_TreePath = new List<MayaElement>();
     }
 
     class MayaElementType
@@ -234,8 +228,6 @@ namespace MFCheck
             Document = document;
         }
 
-        private readonly List<MayaElement> m_Children = new List<MayaElement>();
-
         //类型
         public string Type { get; private set; }
 
@@ -249,15 +241,18 @@ namespace MFCheck
         public string Command { get; private set; }
 
         //节点属性
-        public string Attribute { get; private set; } = "";
+        public string Attribute { get; private set; }
 
         //重命名命令
         public string Rename { get; private set; }
 
+        //uid
+        public string Uid { get; private set; }
+
         //Maya文档
         public MayaDocument Document { get; private set; }
 
-        public List<MayaElement> Children { get => m_Children.ToList(); }
+        public List<MayaElement> Children { get; } = new List<MayaElement>();
 
         //解析命令
         public bool ParseCommand(string command, StreamReader reader)
@@ -281,6 +276,15 @@ namespace MFCheck
                 while (line.ElementAt(0) == '\t')
                 {
                     line = line.Remove(0, 1);
+                    if (string.IsNullOrEmpty(line))
+                    {
+                        break;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(line))
+                {
+                    continue;
                 }
 
                 if (';' == line.Last())
@@ -317,18 +321,15 @@ namespace MFCheck
                 }
             }
 
+//            Rename = createSession.ElementAt(1).Replace("\"", "");
+//            subs = Command.Split(' ');
+//            Uid = subs[2];
+
             if (string.IsNullOrEmpty(Type) || string.IsNullOrEmpty(Name))
             {
                 return false;
             }
 
-            return true;
-        }
-
-        //添加子元素
-        public bool AddChild(MayaElement child)
-        {
-            m_Children.Add(child);
             return true;
         }
     }

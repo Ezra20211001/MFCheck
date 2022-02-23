@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MFCheck.Form"
         mc:Ignorable="d"
-        Title="项目属性" Height="600" Width="880" WindowStyle="ToolWindow" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
+        Title="项目属性" Height="800" Width="1200" WindowStartupLocation="CenterOwner">
 
     <Window.Resources>
         <Style x:Key="defLabel" TargetType="Label">
@@ -32,10 +32,9 @@
         </Style>
 
         <Style x:Key="defGroupBox" TargetType="GroupBox">
-            <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Top"/>
             <Setter Property="Height" Value="60"/>
-            <Setter Property="Width" Value="750"/>
+            <Setter Property="Margin" Value="60 0 60 0"/>
         </Style>
 
         <Style x:Key="defButton" TargetType="Button">
@@ -45,50 +44,48 @@
             <Setter Property="Height" Value="19"/>
             <Setter Property="Margin" Value="0 10 0 0"/>
         </Style>
-
-        <DataTemplate x:Key="PropField">
-            <StackPanel Orientation="Horizontal">
-                <Button Content=" - "/>
-                <ComboBox MinWidth="50" SelectedItem="{Binding Path=EType}"/>
-                <Button Content=" + "/>
-            </StackPanel>
-        </DataTemplate>
     </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="220"/>
-            <RowDefinition Height="70"/>
-            <RowDefinition Height="70"/>
-            <RowDefinition Height="70"/>
-            <RowDefinition Height="70"/>
+            <RowDefinition Height="1.2*"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
-        <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <Label Style="{StaticResource defLabel}" Content="项目名称" Margin="40 0 0 0"/>
-            <TextBox Style="{StaticResource norTextBox}" x:Name="txtProjName" Width="120" Text="{Binding Path=Name}"/>
-
-            <Label Style="{StaticResource defLabel}" Content="项目描述" Margin="80 0 0 0"/>
-            <TextBox Style="{StaticResource defTextBox}" x:Name="txtProDesc" Width="462" Text="{Binding Description}"/>
-        </StackPanel>
-
-        <StackPanel Grid.Row="1">
+        <Border Grid.Row="0"  BorderThickness="1" BorderBrush="#E5E5E5">
+            <StackPanel  Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                    <Label Style="{StaticResource defLabel}" FontSize="18" Content="项目名称"/>
+                    <TextBox Style="{StaticResource norTextBox}" FontSize="18" x:Name="txtProjName" Width="400" Text="{Binding Path=Name}" Height="28"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="22 10 0 0">
+                    <Label Style="{StaticResource defLabel}" Content="项目描述" />
+                    <TextBox Style="{StaticResource defTextBox}" x:Name="txtProDesc" Width="400" Text="{Binding Description}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+        
+        <StackPanel Grid.Row="1" Margin="0 20 0 0">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="6*"/>
-                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="3*"/>
                 </Grid.ColumnDefinitions>
-                <GroupBox Header="属性列表" Height="200" Margin="60 0 0 0">
+                <GroupBox Header="属性列表" Margin="40 0 0 0">
                     <DataGrid x:Name="propGrid" AutoGenerateColumns="False" CanUserSortColumns="False" IsReadOnly="True"
-                              SelectionChanged="PropGrid_SelectionChanged">
+                              SelectionChanged="PropGrid_SelectionChanged" Height="250" >
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="属性名" Binding="{Binding Name}" />
-                            <DataGridTextColumn Header="属性类型" Binding="{Binding Type}" />
-                            <DataGridTextColumn Binding="{Binding Value}" Header="属性值" />
-                            <DataGridTextColumn Binding="{Binding ReadOnly}" Header="只读属性" />
-                            <DataGridTextColumn Binding="{Binding Desc}" Header="属性描述"/>
+                            <DataGridTextColumn Width="*" Header="属性名" Binding="{Binding Name}" />
+                            <DataGridTextColumn Width="*" Header="属性类型" Binding="{Binding Type}" />
+                            <DataGridTextColumn Width="*" Header="属性值" Binding="{Binding Value}" />
+                            <DataGridTextColumn Width="*" Header="只读属性" Binding="{Binding ReadOnly}" />
+                            <DataGridTextColumn Width="3*" Header="属性描述" Binding="{Binding Desc}" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </GroupBox>
@@ -97,7 +94,7 @@
                     <Button x:Name="butDeleteProp" Style="{StaticResource defButton}" Content="删除" Click="ButDelProp_Click"/>
                     <Button x:Name="butModifyProp" Style="{StaticResource defButton}" Content="修改" Click="ButModifyProp_Click"/>
                 </StackPanel>
-                <GroupBox Grid.Column="2" Header="编辑属性" Height="200" Margin ="0 0 60 0">
+                <GroupBox Grid.Column="2" Header="编辑属性" Margin ="0 0 60 0">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition/>
@@ -127,24 +124,36 @@
         </StackPanel>
 
         <StackPanel Grid.Row="2">
-            <GroupBox Style="{StaticResource defGroupBox}" x:Name="groupFile" Header="文件命名">
+            <GroupBox Style="{StaticResource defGroupBox}" Header="文件命名">
                 <TextBox x:Name="txtFileNaming" Text="{Binding FileNaming}" VerticalAlignment="Center" FontSize="16" ToolTip="格式: 属性1_属性2_...属性N"/>
             </GroupBox>
         </StackPanel>
         
         <StackPanel Grid.Row="3">
-            <GroupBox Style="{StaticResource defGroupBox}" x:Name="groupMod" Header="模型命名">
-                <TextBox x:Name="txtModNaming" Text="{Binding ModNaming}" VerticalAlignment="Center" FontSize="16" ToolTip="格式: 属性1_属性2_...属性N"/>
+            <GroupBox Style="{StaticResource defGroupBox}" Header="场景命名">
+                <TextBox x:Name="txtSceneNaming" Text="{Binding SceneNaming}" VerticalAlignment="Center" FontSize="16" ToolTip="格式: 属性1_属性2_...属性N"/>
             </GroupBox>
         </StackPanel>
 
         <StackPanel Grid.Row="4">
+            <GroupBox Style="{StaticResource defGroupBox}" Header="角色命名">
+                <TextBox x:Name="txtCharacterNaming" Text="{Binding CharNaming}" VerticalAlignment="Center" FontSize="16" ToolTip="格式: 属性1_属性2_...属性N"/>
+            </GroupBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="5">
+            <GroupBox Style="{StaticResource defGroupBox}" Header="道具命名">
+                <TextBox x:Name="txtPropNaming" Text="{Binding PropNaming}" VerticalAlignment="Center" FontSize="16" ToolTip="格式: 属性1_属性2_...属性N"/>
+            </GroupBox>
+        </StackPanel>
+        
+        <StackPanel Grid.Row="6">
             <GroupBox Style="{StaticResource defGroupBox}" x:Name="groupCam" Header="相机命名">
                 <TextBox x:Name="txtCamNaming" Text="{Binding CamNaming}" VerticalAlignment="Center" FontSize="16" ToolTip="格式: 属性1_属性2_...属性N"/>
             </GroupBox>
         </StackPanel>
 
-        <StackPanel Grid.Row="5">
+        <StackPanel Grid.Row="7">
             <Button Style="{StaticResource defButton}" x:Name="btnOK" Content="确定" Click="BtnOK_Click"/>
         </StackPanel>
     </Grid>

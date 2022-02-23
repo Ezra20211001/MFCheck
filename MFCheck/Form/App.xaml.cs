@@ -32,7 +32,11 @@ namespace MFCheck
                     {
                         Name = proj.Attribute("Name").Value,
                         Description = proj.Attribute("Description").Value,
-
+                        FileNaming = proj.Attribute("FileNaming").Value,
+                        SceneNaming = proj.Attribute("SceneNaming").Value,
+                        CharNaming = proj.Attribute("CharacterNaming").Value,
+                        PropNaming = proj.Attribute("PropNaming").Value,
+                        CamNaming = proj.Attribute("CamNaming").Value,
                     };
 
                     foreach (var prop in proj.Descendants("Property"))
@@ -50,10 +54,6 @@ namespace MFCheck
                         property.ReadOnly = bool.Parse(prop.Attribute("ReadOnly").Value);
                     }
 
-                    // 一定要这样写，属性有依赖关系
-                    project.FileNaming = proj.Attribute("FileNaming").Value;
-                    project.ModNaming = proj.Attribute("ModNaming").Value;
-                    project.CamNaming = proj.Attribute("CamNaming").Value;
                     AddProject(project);
                 }
             }
@@ -72,8 +72,10 @@ namespace MFCheck
             string fullPath = ConfigPath + ConfigName;
 
             //导出配置
-            XDocument xmlDocument = new XDocument();
-            xmlDocument.Declaration = new XDeclaration("1.0", "utf-8", "yes");
+            XDocument xmlDocument = new XDocument
+            {
+                Declaration = new XDeclaration("1.0", "utf-8", "yes")
+            };
 
             XElement root = new XElement("ProjectSet");
             xmlDocument.Add(root);
@@ -86,7 +88,9 @@ namespace MFCheck
                 projEle.Add(new XAttribute("Name", project.Name));
                 projEle.Add(new XAttribute("Description", project.Description));
                 projEle.Add(new XAttribute("FileNaming", project.FileNaming));
-                projEle.Add(new XAttribute("ModNaming", project.ModNaming));
+                projEle.Add(new XAttribute("SceneNaming", project.SceneNaming));
+                projEle.Add(new XAttribute("CharacterNaming", project.CharNaming));
+                projEle.Add(new XAttribute("PropNaming", project.PropNaming));
                 projEle.Add(new XAttribute("CamNaming", project.CamNaming));
 
                 foreach (var property in project.PropertySet)
